@@ -2,11 +2,19 @@
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using BackEnd;
+using LitJson;
+using System;
+
+public class UserInfoData
+{
+    public string userNickname;
+}
 
 public class BackendServerManager : MonoBehaviour
 {
     private static BackendServerManager instance;
-    
+    public UserInfoData UserInfoData = new UserInfoData();
+
     string userAccountInfo;
 
     private void Awake()
@@ -33,7 +41,7 @@ public class BackendServerManager : MonoBehaviour
         Backend.Initialize(() =>
         {
             if (Backend.IsInitialized)
-            {               
+            {
                 print("서버 연결 : 정상");
             }
             else
@@ -47,13 +55,12 @@ public class BackendServerManager : MonoBehaviour
     #region 로그인 및 회원가입
     public bool ServerLogin(string ID)
     {
-        print("로그인 시도 : " + ID);
+        print("로그인 시도 ID : " + ID);
 
         BackendReturnObject BRO = Backend.BMember.CustomLogin(ID, ID);
 
         if (BRO.IsSuccess())
         {
-            print("== 로그인 성공 ==");
             return true;
         }
         else
@@ -67,13 +74,48 @@ public class BackendServerManager : MonoBehaviour
     {
         BackendReturnObject BRO = Backend.BMember.CustomSignUp(ID, ID);
 
-        if (BRO.IsSuccess()) ServerLogin(ID);
+        if (BRO.IsSuccess()) return ServerLogin(ID);
         else
         {
             AccountException(BRO.GetErrorCode());
             return false;
         }
-        return true;
+    }
+
+    // 닉네임 유무 체크
+    public bool NIcknameCheck()
+    {
+        BackendReturnObject BRO = Backend.BMember.GetUserInfo();
+
+        if (BRO.IsSuccess())
+        {
+            JsonData data = BRO.GetReturnValuetoJSON()["row"];
+            
+            if (data["nickname"] == null) return false;
+            else
+            {
+                UserInfoData.userNickname = data["nickname"].ToString();
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    // 닉네임 생성
+    public void SetNickname(string nickname, Action<bool,string> func)
+    {
+        print("닉네임 설정 중");
+        BackendReturnObject BRO = Backend.BMember.UpdateNickname(nickname);
+
+        if (BRO.IsSuccess())
+        {
+            func(true, string.Empty);
+            return;
+        }
+
+        func(false, string.Format(BRO.GetMessage()));
+        
     }
 
     /// <summary>
