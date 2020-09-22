@@ -23,6 +23,11 @@ public class Login : MonoBehaviour
     string userID;
     bool canStart = false;
 
+    public void TestError()
+    {
+        errorUI.SetActive(true);
+    }
+
     private void Awake()
     {
         path = Application.persistentDataPath + "/data.txt";

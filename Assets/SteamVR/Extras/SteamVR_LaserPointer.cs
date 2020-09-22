@@ -1,5 +1,6 @@
 ﻿//======= Copyright (c) Valve Corporation, All rights reserved. ===============
 using UnityEngine;
+using UnityEngine.EventSystems;
 using System.Collections;
 
 namespace Valve.VR.Extras
@@ -102,7 +103,7 @@ namespace Valve.VR.Extras
             Ray raycast = new Ray(transform.position, transform.forward);
             RaycastHit hit;
             bool bHit = Physics.Raycast(raycast, out hit);
-
+            
             if (previousContact && previousContact != hit.transform)
             {
                 PointerEventArgs args = new PointerEventArgs();
@@ -146,11 +147,13 @@ namespace Valve.VR.Extras
             {
                 pointer.transform.localScale = new Vector3(thickness * 5f, thickness * 5f, dist);
                 pointer.GetComponent<MeshRenderer>().material.color = clickColor;
+                print("누름");
             }
             else
             {
                 pointer.transform.localScale = new Vector3(thickness, thickness, dist);
                 pointer.GetComponent<MeshRenderer>().material.color = color;
+                
             }
             pointer.transform.localPosition = new Vector3(0f, 0f, dist / 2f);
         }
