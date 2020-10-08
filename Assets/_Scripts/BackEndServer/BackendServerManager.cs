@@ -42,12 +42,12 @@ public class BackendServerManager : MonoBehaviour
         {
             if (Backend.IsInitialized)
             {
-                print("서버 연결 : 정상");
+                TitleManager.instance.SetTitleLog("<Color=red>서버 연결 성공</Color>\n사용 가능한 서비스\n-랭킹\n- 데이터 저장");
             }
             else
             {
                 // 인터넷 연결 혹은 서버 오프라고 메시지 띄우기
-                print("서버 연결 : 실패");
+                TitleManager.instance.SetTitleLog("<Color=red>서버 연결 실패</Color>\nOFFLINE");
             }
         });
     }
@@ -105,7 +105,6 @@ public class BackendServerManager : MonoBehaviour
     // 닉네임 생성
     public void SetNickname(string nickname, Action<bool,string> func)
     {
-        print("닉네임 설정 중");
         BackendReturnObject BRO = Backend.BMember.UpdateNickname(nickname);
 
         if (BRO.IsSuccess())

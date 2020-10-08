@@ -3,87 +3,72 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using UnityEngine.EventSystems;
 
 public class Login : MonoBehaviour
 {
-    public Text mainText;
-    Animator textAm;
-
-    [Header("Test")]
-    public bool isTest = false;
-    public InputField testId;
-
+    // 에러 관련
     public GameObject errorUI;
     Text errorText;
-    public GameObject nicknameUI;
-    InputField nicknameField;
-   
 
+    // 닉네임
+    public GameObject nicknameUI;
+    public GameObject keyboard;
+    InputField nicknameField;
+
+    // 주 손 선택
+    public GameObject selectHandUI;
+    string handType;
+
+    // 컴포넌트
+    HandType _HT;
+
+    // 유저 계정 관련
     string path;
     string userID;
-    bool canStart = false;
-
-    public void TestError()
-    {
-        errorUI.SetActive(true);
-    }
 
     private void Awake()
     {
-        path = Application.persistentDataPath + "/data.txt";
-        print(path);
-
-        textAm = mainText.GetComponent<Animator>();
-        nicknameField = nicknameUI.transform.GetChild(2).GetComponent<InputField>();
-        errorText = errorUI.transform.GetChild(2).GetComponent<Text>();
+        HandCheck();
     }
 
     private void Start()
     {
-        mainText.text = "서버 연결 중...";
-
         userID = CreateUser();
-
-        if (!isTest)
-        LoginPreparations();
     }
 
-    public void TestLogin()
-    {
-        if(BackendServerManager.GetInstance().ServerLogin(testId.text))
-        {
-            print("== 로그인 성공 ==");
 
-            if (!BackendServerManager.GetInstance().NIcknameCheck())
-            {
-                mainText.text = "닉네임 설정중...";
-                nicknameUI.SetActive(true);
-            }
-            else
-            {
-                mainText.text = "아무 버튼이나 눌러주세요!";
-                print($"닉네임 : {BackendServerManager.GetInstance().UserInfoData.userNickname}");
-                textAm.SetTrigger("isTouch");
-                canStart = true;
-            }
-        }
+    // 초기화
+    void Init()
+    {
+        path = Application.persistentDataPath + "/data.txt";
+        print(path);
+
+        nicknameField = nicknameUI.transform.GetChild(2).GetComponent<InputField>();
+        errorText = errorUI.transform.GetChild(2).GetComponent<Text>();
     }
 
-    private void Update()
+    // 주 손을 선택했는지 판단
+    void HandCheck()
     {
-        if (canStart)
+        _HT = GetComponent<HandType>();
+        path = Application.persistentDataPath + "/Handdata.txt";
+
+        if (File.Exists(path))
         {
-            if (Input.GetMouseButtonDown(0))
-            {
-                SceneManager.LoadSceneAsync("MatchLobby");
-            }
+            handType = File.ReadAllText(path);
+            if (handType == "left") _HT.SetHandType(Valve.VR.SteamVR_Input_Sources.LeftHand);
+            else _HT.SetHandType(Valve.VR.SteamVR_Input_Sources.RightHand);
+
+            Init();
         }
+        else selectHandUI.SetActive(true);
     }
 
     /// <summary>
     /// 로그인 시도
     /// </summary>
-    void LoginPreparations()
+    public void LoginPreparations()
     {
         if (!BackendServerManager.GetInstance().ServerLogin(userID))
         {
@@ -95,50 +80,40 @@ public class Login : MonoBehaviour
             }
         }
 
-            print("== 로그인 성공 ==");
+        print("== 로그인 성공 ==");
 
-            if (!BackendServerManager.GetInstance().NIcknameCheck())
-            {
-                mainText.text = "닉네임 설정중...";
-                nicknameUI.SetActive(true);
-            }
-            else
-            {
-                mainText.text = "아무 버튼이나 눌러주세요!";
-                print($"닉네임 : {BackendServerManager.GetInstance().UserInfoData.userNickname}");
-                textAm.SetTrigger("isTouch");
-                canStart = true;
-            }
-       
+        if (!BackendServerManager.GetInstance().NIcknameCheck())
+        {
+            nicknameUI.SetActive(true);
+            keyboard.SetActive(true);
+        }
+        else
+        {
+            print($"닉네임 : {BackendServerManager.GetInstance().UserInfoData.userNickname}");
+            SceneManager.LoadSceneAsync("MainMenu");
+        }
+
     }
 
     public void SetNickname()
     {
+        Button btn = EventSystem.current.currentSelectedGameObject.GetComponent<Button>();
+        btn.interactable = false;
+
         BackendServerManager.GetInstance().SetNickname(nicknameField.text, (bool result, string error) =>
         {
             if (!result)
             {
+                btn.interactable = true;
                 errorUI.SetActive(true);
                 errorText.text = error;
                 return;
             }
 
-                print("== 닉네임 설정완료 ==");
-                SceneManager.LoadSceneAsync("MatchLobby");
-           
-        });
-    }
+            print("== 닉네임 설정완료 ==");
+            SceneManager.LoadSceneAsync("MainMenu");
 
-    public void ActiveOff(string type)
-    {
-        switch (type)
-        {
-            case "error":
-                errorUI.SetActive(false);
-                break;
-            default:
-                break;
-        }
+        });
     }
 
     /// <summary>
@@ -158,7 +133,7 @@ public class Login : MonoBehaviour
                 userAccountInfo = textRead.ReadLine();
                 textRead.Dispose();
             }
-            else if(!File.Exists(path) || (File.Exists(path) && reset))
+            else if (!File.Exists(path) || (File.Exists(path) && reset))
             {
                 userAccountInfo = GetRandomInfo();
                 if (File.Exists(path)) File.Delete(path);
