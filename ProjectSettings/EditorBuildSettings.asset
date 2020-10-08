@@ -9,7 +9,7 @@ EditorBuildSettings:
     path: Assets/Scenes/Title.unity
     guid: 9fc0d4010bbf28b4594072e72b8655ab
   - enabled: 1
-    path: Assets/Scenes/MatchLobby.unity
+    path: Assets/Scenes/MainMenu.unity
     guid: b09538ae8b53de540b6e525b7b21250c
   - enabled: 1
     path: Assets/Scenes/Ingame.unity

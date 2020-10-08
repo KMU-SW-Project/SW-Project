@@ -3098,6 +3098,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: SM_Env_Cloud_03 (4)
       objectReference: {fileID: 0}
+    - target: {fileID: 1769399329111782, guid: 5387a77a1b6992f409e6f9f5030db072, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4670857609672192, guid: 5387a77a1b6992f409e6f9f5030db072, type: 3}
       propertyPath: m_LocalPosition.x
       value: 401.06827
@@ -33178,6 +33182,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: SM_Env_Cloud_03 (5)
       objectReference: {fileID: 0}
+    - target: {fileID: 1769399329111782, guid: 5387a77a1b6992f409e6f9f5030db072, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4670857609672192, guid: 5387a77a1b6992f409e6f9f5030db072, type: 3}
       propertyPath: m_LocalPosition.x
       value: -165.10173
@@ -37319,7 +37327,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1574029817453796, guid: 8dd2523cc0a9ffd47922c00f0ca8bb03, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4123890802692648, guid: 8dd2523cc0a9ffd47922c00f0ca8bb03, type: 3}
       propertyPath: m_RootOrder
@@ -40887,6 +40895,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: SM_Env_Cloud_03 (3)
       objectReference: {fileID: 0}
+    - target: {fileID: 1769399329111782, guid: 5387a77a1b6992f409e6f9f5030db072, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4670857609672192, guid: 5387a77a1b6992f409e6f9f5030db072, type: 3}
       propertyPath: m_LocalPosition.x
       value: 7.32
@@ -42294,6 +42306,10 @@ PrefabInstance:
     - target: {fileID: 1769399329111782, guid: 5387a77a1b6992f409e6f9f5030db072, type: 3}
       propertyPath: m_Name
       value: SM_Env_Cloud_03 (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 1769399329111782, guid: 5387a77a1b6992f409e6f9f5030db072, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4670857609672192, guid: 5387a77a1b6992f409e6f9f5030db072, type: 3}
       propertyPath: m_LocalPosition.x
@@ -53824,6 +53840,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: SM_Env_Cloud_03 (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 1769399329111782, guid: 5387a77a1b6992f409e6f9f5030db072, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4670857609672192, guid: 5387a77a1b6992f409e6f9f5030db072, type: 3}
       propertyPath: m_LocalPosition.x
       value: -6.17092
@@ -55699,6 +55719,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 916343474}
     m_Modifications:
+    - target: {fileID: 1769399329111782, guid: 5387a77a1b6992f409e6f9f5030db072, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4670857609672192, guid: 5387a77a1b6992f409e6f9f5030db072, type: 3}
       propertyPath: m_LocalPosition.x
       value: 160.32826
@@ -57202,6 +57226,10 @@ PrefabInstance:
     - target: {fileID: 1769399329111782, guid: 5387a77a1b6992f409e6f9f5030db072, type: 3}
       propertyPath: m_Name
       value: SM_Env_Cloud_03 (2)
+      objectReference: {fileID: 0}
+    - target: {fileID: 1769399329111782, guid: 5387a77a1b6992f409e6f9f5030db072, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4670857609672192, guid: 5387a77a1b6992f409e6f9f5030db072, type: 3}
       propertyPath: m_LocalPosition.x
@@ -67242,6 +67270,10 @@ PrefabInstance:
     - target: {fileID: 1769399329111782, guid: 5387a77a1b6992f409e6f9f5030db072, type: 3}
       propertyPath: m_Name
       value: SM_Env_Cloud_03 (3)
+      objectReference: {fileID: 0}
+    - target: {fileID: 1769399329111782, guid: 5387a77a1b6992f409e6f9f5030db072, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4670857609672192, guid: 5387a77a1b6992f409e6f9f5030db072, type: 3}
       propertyPath: m_LocalPosition.x

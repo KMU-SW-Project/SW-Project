@@ -6,72 +6,50 @@ using Valve.VR;
 
 public class VRInputModule : BaseInputModule
 {
-    public Camera m_Camera;
-    public SteamVR_Input_Sources m_TargetSouce;
-    public SteamVR_Action_Boolean m_ClickAction;
+    public Pointer pointer = null;
 
-    GameObject m_CurrentObject = null;
-    PointerEventData m_Data = null;
+    public PointerEventData Data { get; private set; } = null;
 
-    protected override void Awake()
+    protected override void Start()
     {
-        base.Awake();
-
-        m_Data = new PointerEventData(eventSystem);
+        Data = new PointerEventData(eventSystem);
+        Data.position = new Vector2(pointer.Camera.pixelWidth / 2, pointer.Camera.pixelHeight / 2);
     }
 
     public override void Process()
     {
-        m_Data.Reset();
-        m_Data.position = new Vector2(m_Camera.pixelWidth / 2, m_Camera.pixelHeight / 2);
+        eventSystem.RaycastAll(Data, m_RaycastResultCache);
+        Data.pointerCurrentRaycast = FindFirstRaycast(m_RaycastResultCache);
 
-        eventSystem.RaycastAll(m_Data, m_RaycastResultCache);
-        m_Data.pointerCurrentRaycast = FindFirstRaycast(m_RaycastResultCache);
-        m_CurrentObject = m_Data.pointerCurrentRaycast.gameObject;
+        HandlePointerExitAndEnter(Data, Data.pointerCurrentRaycast.gameObject);
 
-        m_RaycastResultCache.Clear();
-
-        HandlePointerExitAndEnter(m_Data, m_CurrentObject);
-
-        if (m_ClickAction.GetStateDown(m_TargetSouce))
-            ProcessPress(m_Data);
-
-        if (m_ClickAction.GetStateUp(m_TargetSouce))
-            ProcessRelease(m_Data);
+        ExecuteEvents.Execute(Data.pointerDrag, Data, ExecuteEvents.dragHandler);
     }
 
-    public PointerEventData GetData()
+    public void Press()
     {
-        return m_Data;
+        Data.pointerPressRaycast = Data.pointerCurrentRaycast;
+
+        Data.pointerPress = ExecuteEvents.GetEventHandler<IPointerClickHandler>(Data.pointerPressRaycast.gameObject);
+        Data.pointerDrag = ExecuteEvents.GetEventHandler<IDragHandler>(Data.pointerPressRaycast.gameObject);
+
+        ExecuteEvents.Execute(Data.pointerPress, Data, ExecuteEvents.pointerDownHandler);
+        ExecuteEvents.Execute(Data.pointerDrag, Data, ExecuteEvents.beginDragHandler);
     }
 
-    void ProcessPress(PointerEventData data)
+    public void Release()
     {
-        data.pointerPressRaycast = data.pointerCurrentRaycast;
+        GameObject pointerRelease = ExecuteEvents.GetEventHandler<IPointerClickHandler>(Data.pointerCurrentRaycast.gameObject);
 
-        GameObject newPointerPress = ExecuteEvents.ExecuteHierarchy(m_CurrentObject, data, ExecuteEvents.pointerDownHandler);
+        if (Data.pointerPress == pointerRelease)
+            ExecuteEvents.Execute(Data.pointerPress, Data, ExecuteEvents.pointerClickHandler);
 
-        if (newPointerPress == null)
-            newPointerPress = ExecuteEvents.GetEventHandler<IPointerClickHandler>(m_CurrentObject);
+        ExecuteEvents.Execute(Data.pointerPress, Data, ExecuteEvents.pointerUpHandler);
+        ExecuteEvents.Execute(Data.pointerDrag, Data, ExecuteEvents.endDragHandler);
 
-        data.pressPosition = data.position;
-        data.pointerPress = newPointerPress;
-        data.rawPointerPress = m_CurrentObject;
+        Data.pointerPress = null;
+        Data.pointerDrag = null;
+
+        Data.pointerCurrentRaycast.Clear();
     }
-
-    void ProcessRelease(PointerEventData data)
-    {
-        ExecuteEvents.Execute(data.pointerPress, data, ExecuteEvents.pointerUpHandler);
-
-        GameObject pointerUpHandler = ExecuteEvents.GetEventHandler<IPointerClickHandler>(m_CurrentObject);
-
-        if (data.pointerPress == pointerUpHandler)
-            ExecuteEvents.Execute(data.pointerPress, data, ExecuteEvents.pointerClickHandler);
-
-        eventSystem.SetSelectedGameObject(null);
-
-        data.pressPosition = Vector2.zero;
-        data.pointerPress = null;
-        data.rawPointerPress = null;
-    }    
 }
