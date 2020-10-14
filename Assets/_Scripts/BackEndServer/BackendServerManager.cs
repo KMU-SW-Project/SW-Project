@@ -16,6 +16,7 @@ public class BackendServerManager : MonoBehaviour
     public UserInfoData UserInfoData = new UserInfoData();
 
     string userAccountInfo;
+    public bool isConnected = false;
 
     private void Awake()
     {
@@ -42,10 +43,12 @@ public class BackendServerManager : MonoBehaviour
         {
             if (Backend.IsInitialized)
             {
+                isConnected = true;
                 TitleManager.instance.SetTitleLog("<Color=red>서버 연결 성공</Color>\n사용 가능한 서비스\n-랭킹\n- 데이터 저장");
             }
             else
             {
+                isConnected = false;
                 // 인터넷 연결 혹은 서버 오프라고 메시지 띄우기
                 TitleManager.instance.SetTitleLog("<Color=red>서버 연결 실패</Color>\nOFFLINE");
             }
@@ -65,8 +68,7 @@ public class BackendServerManager : MonoBehaviour
         }
         else
         {
-            AccountException(BRO.GetErrorCode());
-            return false;
+            return ServerSignUp(ID);
         }
     }
 
@@ -75,11 +77,7 @@ public class BackendServerManager : MonoBehaviour
         BackendReturnObject BRO = Backend.BMember.CustomSignUp(ID, ID);
 
         if (BRO.IsSuccess()) return ServerLogin(ID);
-        else
-        {
-            AccountException(BRO.GetErrorCode());
-            return false;
-        }
+        else return false;
     }
 
     // 닉네임 유무 체크
@@ -116,21 +114,5 @@ public class BackendServerManager : MonoBehaviour
         func(false, string.Format(BRO.GetMessage()));
         
     }
-
-    /// <summary>
-    /// 로그인, 회원가입에 대한 예외처리
-    /// </summary>
-    /// <param name="exception"> 에러코드 </param>
-    void AccountException(string exception)
-    {
-        // ID가 중복
-        if (exception.Equals("DuplicatedParameterException")) print("아이디 중복");
-        // 아이디, 비번 없거나 틀림
-        else if (exception.Equals("BadUnauthorizedException")) print("아이디가 없습니다.");
-    }
     #endregion
-
-
-
-
 }

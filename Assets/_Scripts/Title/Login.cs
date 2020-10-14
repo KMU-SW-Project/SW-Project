@@ -1,9 +1,11 @@
 ﻿using System.IO;
 using System.Linq;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using UnityEngine.EventSystems;
+using System;
 
 public class Login : MonoBehaviour
 {
@@ -22,31 +24,13 @@ public class Login : MonoBehaviour
 
     // 컴포넌트
     HandType _HT;
+    public Text stateText;
 
     // 유저 계정 관련
     string path;
     string userID;
 
-    private void Awake()
-    {
-        HandCheck();
-    }
-
-    private void Start()
-    {
-        userID = CreateUser();
-    }
-
-
-    // 초기화
-    void Init()
-    {
-        path = Application.persistentDataPath + "/data.txt";
-        print(path);
-
-        nicknameField = nicknameUI.transform.GetChild(2).GetComponent<InputField>();
-        errorText = errorUI.transform.GetChild(2).GetComponent<Text>();
-    }
+    private void Awake() => HandCheck();
 
     // 주 손을 선택했는지 판단
     void HandCheck()
@@ -57,43 +41,89 @@ public class Login : MonoBehaviour
         if (File.Exists(path))
         {
             handType = File.ReadAllText(path);
+
             if (handType == "left") _HT.SetHandType(Valve.VR.SteamVR_Input_Sources.LeftHand);
-            else _HT.SetHandType(Valve.VR.SteamVR_Input_Sources.RightHand);
+            else if (handType == "right") _HT.SetHandType(Valve.VR.SteamVR_Input_Sources.RightHand);
+            else selectHandUI.SetActive(true);
 
             Init();
         }
-        else selectHandUI.SetActive(true);
+        else
+        {
+            selectHandUI.SetActive(true);
+        }
     }
+
+    // 초기화
+    void Init()
+    {
+        path = Application.persistentDataPath + "/data.txt";
+
+
+        nicknameField = nicknameUI.transform.GetChild(2).GetComponent<InputField>();
+        errorText = errorUI.transform.GetChild(2).GetComponent<Text>();
+
+        if (!File.Exists(path)) File.Create(path);
+
+        stateText.text = "<Color=red>상태</Color>\n로그인 대기중";
+        //  userID = CreateUser(true);
+    }
+
 
     /// <summary>
     /// 로그인 시도
     /// </summary>
-    public void LoginPreparations()
+    IEnumerator StartLogin()
     {
-        if (!BackendServerManager.GetInstance().ServerLogin(userID))
+        while (true)
         {
-            userID = CreateUser(true);
-            if (!BackendServerManager.GetInstance().ServerSignUp(userID))
+            if (BackendServerManager.GetInstance().isConnected)
             {
-                print("로그인 실패, 다시 시도해 주세요!");
-                return;
+                if (CheckID() == null)
+                {
+                    userID = CreateID();
+                }
+                else userID = CheckID();
+
+                stateText.text = "<Color=red>상태</Color>\n로그인 시도";
+                if (!BackendServerManager.GetInstance().ServerLogin(userID))
+                {
+                    userID = CreateID();
+
+                    continue;
+                }
+                else
+                {
+                    stateText.text = "<Color=red>상태</Color>\n로그인 성공";
+                    yield return new WaitForSeconds(0.5f);
+                    if (!BackendServerManager.GetInstance().NIcknameCheck())
+                    {
+                        stateText.text = "<Color=red>상태</Color>\n닉네임 설정 중";
+                        nicknameUI.SetActive(true);
+                        keyboard.SetActive(true);
+                        break;
+                    }
+                    else
+                    {
+                        stateText.text = "<Color=red>상태</Color>\n잠시후 메인메뉴로 이동합니다.";
+                        yield return new WaitForSeconds(0.3f);
+                        SceneManager.LoadSceneAsync("MainMenu");
+                        break;
+                    }
+                }
             }
-        }
+            else
+            {
+                stateText.text = "<Color=red>상태</Color>\n[OFFLINE]\n잠시후 메인메뉴로 이동합니다.";
+                yield return new WaitForSeconds(0.3f);
+                SceneManager.LoadSceneAsync("MainMenu");
+                break;
+            }
 
-        print("== 로그인 성공 ==");
-
-        if (!BackendServerManager.GetInstance().NIcknameCheck())
-        {
-            nicknameUI.SetActive(true);
-            keyboard.SetActive(true);
         }
-        else
-        {
-            print($"닉네임 : {BackendServerManager.GetInstance().UserInfoData.userNickname}");
-            SceneManager.LoadSceneAsync("MainMenu");
-        }
-
     }
+
+    public void StartLoginBtn() => StartCoroutine(StartLogin());
 
     public void SetNickname()
     {
@@ -110,53 +140,33 @@ public class Login : MonoBehaviour
                 return;
             }
 
-            print("== 닉네임 설정완료 ==");
             SceneManager.LoadSceneAsync("MainMenu");
-
         });
     }
 
-    /// <summary>
-    /// 최초 실행시 회원가입을 위한 유저의 아이디 생성 후 리턴
-    /// </summary>
-    /// <param name="reset"> 중복 아이디가 생성 되었을 경우 새로 생성</param>
-    /// <returns></returns>
-    private string CreateUser(bool reset = false)
+    private string CheckID()
     {
+        stateText.text = "<Color=red>상태</Color>\n데이터 파일 확인중";
+
         string userAccountInfo = "";
 
-        try
-        {
-            if (File.Exists(path) && !reset)
-            {
-                StreamReader textRead = File.OpenText(path);
-                userAccountInfo = textRead.ReadLine();
-                textRead.Dispose();
-            }
-            else if (!File.Exists(path) || (File.Exists(path) && reset))
-            {
-                userAccountInfo = GetRandomInfo();
-                if (File.Exists(path)) File.Delete(path);
+        StreamReader textRead = File.OpenText(path);
+        userAccountInfo = textRead.ReadLine();
+        textRead.Dispose();
 
-                StreamWriter textWrite = File.CreateText(path);
-                textWrite.WriteLine(userAccountInfo);
-                textWrite.Dispose();
-            }
-
-            return userAccountInfo;
-        }
-        catch (System.Exception e)
-        {
-            print(e.Message);
-        }
-
-        return null;
+        return userAccountInfo;
     }
 
-    public bool CheckUserInfoFile()
+    private string CreateID()
     {
-        if (File.Exists(path)) return true;
-        else return false;
+        stateText.text = "<Color=red>상태</Color>\n새로운 데이터 생성";
+
+        string newID;
+
+        newID = GetRandomInfo();
+        File.WriteAllText(path, newID);
+
+        return newID;
     }
 
     /// <summary>
