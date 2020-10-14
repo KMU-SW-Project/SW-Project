@@ -16,6 +16,8 @@ public class Login : MonoBehaviour
     // 닉네임
     public GameObject nicknameUI;
     public GameObject keyboard;
+
+    [SerializeField]
     InputField nicknameField;
 
     // 주 손 선택
