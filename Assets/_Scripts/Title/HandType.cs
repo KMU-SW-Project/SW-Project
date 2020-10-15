@@ -21,7 +21,7 @@ public class HandType : MonoBehaviour
             _LR = left.transform.GetChild(1).GetComponent<LineRenderer>();
 
             canvas.worldCamera = left.transform.GetChild(1).GetComponent<Camera>();
-         SteamInputModule.instance.pointer = left.transform.GetChild(1).GetComponent<Pointer>();
+              SteamInputModule.instance.pointer = left.transform.GetChild(1).GetComponent<Pointer>();
 
             _LR.startColor = Color.red;
 
