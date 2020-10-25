@@ -7,8 +7,8 @@ using UnityEngine.EventSystems;
 public class ButtonTransitioner : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerDownHandler, IPointerClickHandler
 {
     public Color32 m_NormalColor = Color.white;
-    public Color32 m_HoverColor = Color.gray;
-    public Color32 m_DownColor = Color.white;
+    public Color m_HoverColor = new Color(1, 0.725f, 0.721f);
+    public Color m_DownColor = new Color(1, 0.46f, 0.46f);
 
     Image m_Image = null;
 

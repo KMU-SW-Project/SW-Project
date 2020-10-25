@@ -3,13 +3,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class LobbyManager : MonoBehaviour
 {
     private static LobbyManager instance;
 
     public Text nicknameText;
-    public GameObject loadingUI;
     Text loadingText;
 
     private void Awake()
@@ -17,8 +17,7 @@ public class LobbyManager : MonoBehaviour
         if (instance != null) Destroy(instance);
 
         instance = this;
-
-        if (loadingUI.activeSelf) loadingUI.SetActive(false);
+        
     }
 
     public static LobbyManager GetInstance()
@@ -34,37 +33,12 @@ public class LobbyManager : MonoBehaviour
 
     void Start()
     {
-        loadingText = loadingUI.transform.GetChild(1).GetComponent<Text>();
-
-        BackendMatchManager.GetInstance().JoinMatchServer();
-
-        if (BackendServerManager.GetInstance().UserInfoData.userNickname != null)
-            nicknameText.text = BackendServerManager.GetInstance().UserInfoData.userNickname;
+        nicknameText.text = BackendServerManager.GetInstance().GetNickname();
     }
 
-    // 방 생성
-    public void OpenRoomUI()
+    public void GoTitle()
     {
-        if (BackendMatchManager.GetInstance().CreateMatchRoom())
-            BackendMatchManager.GetInstance().RequestMatchMaking();
-    }
-
-    // 매치 할시 UI 창 제어
-    public void MatchRequestCallback(bool result)
-    {
-        if (!result)
-        {
-            loadingUI.SetActive(false);
-            return;
-        }
-
-        loadingUI.SetActive(true);
-    }
-
-    // 매치 성공시 텍스트 바꿈
-    public void MatchDoneCallback()
-    {
-        loadingText.text = "매치 상대 발견!";
+        SceneManager.LoadSceneAsync("Title");
     }
 
 }
