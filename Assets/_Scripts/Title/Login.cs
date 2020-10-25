@@ -25,7 +25,6 @@ public class Login : MonoBehaviour
     string handType;
 
     // 컴포넌트
-    HandType _HT;
     public Text stateText;
 
     // 유저 계정 관련
@@ -37,15 +36,15 @@ public class Login : MonoBehaviour
     // 주 손을 선택했는지 판단
     void HandCheck()
     {
-        _HT = GetComponent<HandType>();
         path = Application.persistentDataPath + "/Handdata.txt";
 
         if (File.Exists(path))
         {
             handType = File.ReadAllText(path);
+            GameManager.GetInstance().handType = handType;
 
-            if (handType == "left") _HT.SetHandType(Valve.VR.SteamVR_Input_Sources.LeftHand);
-            else if (handType == "right") _HT.SetHandType(Valve.VR.SteamVR_Input_Sources.RightHand);
+            if (handType == "left") HandType.instance.SetHandType(Valve.VR.SteamVR_Input_Sources.LeftHand);
+            else if (handType == "right") HandType.instance.SetHandType(Valve.VR.SteamVR_Input_Sources.RightHand);
             else selectHandUI.SetActive(true);
 
             Init();

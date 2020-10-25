@@ -114,5 +114,10 @@ public class BackendServerManager : MonoBehaviour
         func(false, string.Format(BRO.GetMessage()));
         
     }
+
+    public string GetNickname()
+    {
+        return UserInfoData.userNickname;
+    }
     #endregion
 }
