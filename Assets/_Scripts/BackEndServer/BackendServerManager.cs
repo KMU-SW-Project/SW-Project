@@ -8,6 +8,8 @@ using System;
 public class UserInfoData
 {
     public string userNickname;
+    public int userCharacter;
+    public string charIndate;
 }
 
 public class BackendServerManager : MonoBehaviour
@@ -88,7 +90,7 @@ public class BackendServerManager : MonoBehaviour
         if (BRO.IsSuccess())
         {
             JsonData data = BRO.GetReturnValuetoJSON()["row"];
-            
+
             if (data["nickname"] == null) return false;
             else
             {
@@ -101,7 +103,7 @@ public class BackendServerManager : MonoBehaviour
     }
 
     // 닉네임 생성
-    public void SetNickname(string nickname, Action<bool,string> func)
+    public void SetNickname(string nickname, Action<bool, string> func)
     {
         BackendReturnObject BRO = Backend.BMember.UpdateNickname(nickname);
 
@@ -112,12 +114,68 @@ public class BackendServerManager : MonoBehaviour
         }
 
         func(false, string.Format(BRO.GetMessage()));
-        
+
     }
 
     public string GetNickname()
     {
         return UserInfoData.userNickname;
+    }
+    #endregion
+
+    #region 데이터 통신
+
+    public void CheckTableRow(Action<bool> func)
+    {
+        Param where = new Param(); // 검색용 where절 생성
+        BackendReturnObject bro = Backend.GameSchemaInfo.Get("characterInfo", where, 10);
+
+        if (bro.GetErrorCode() == "NotFoundException")
+            func(CreateDataRow());
+        else if (bro.IsSuccess())
+        {
+            UserInfoData.charIndate = bro.GetReturnValuetoJSON()["rows"][0]["inDate"]["S"].ToString();
+
+            bro = Backend.GameSchemaInfo.Get("characterInfo", UserInfoData.charIndate);
+
+            string data = bro.GetReturnValuetoJSON()["rows"][0]["character"]["N"].ToString();
+
+            UserInfoData.userCharacter = int.Parse(data);
+
+            func(true);
+        }
+    }
+
+    bool CreateDataRow()
+    {
+        Param data = new Param();
+        data.Add("character", 0);
+      
+        BackendReturnObject bro = Backend.GameSchemaInfo.Insert("characterInfo", data);
+        if (bro.IsSuccess())
+        {
+            UserInfoData.userCharacter = 0;
+            print("생성 성공" + bro.GetErrorCode());
+            return true;
+        }
+        else
+        {
+            print(bro.GetErrorCode());
+            return false;
+        }
+    }
+
+    public void SetData(string tableName, Action<bool> func)
+    {
+        string inDate = string.Empty;
+        Param param = new Param();
+
+        param.Add("character", UserInfoData.userCharacter);
+        inDate = UserInfoData.charIndate;     
+
+        BackendReturnObject bro = Backend.GameSchemaInfo.Update(tableName, inDate, param);
+        
+        func(bro.IsSuccess());
     }
     #endregion
 }

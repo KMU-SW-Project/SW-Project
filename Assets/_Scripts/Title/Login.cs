@@ -107,8 +107,13 @@ public class Login : MonoBehaviour
                     else
                     {
                         stateText.text = "<Color=red>상태</Color>\n잠시후 메인메뉴로 이동합니다.";
-                        yield return new WaitForSeconds(0.3f);
-                        SceneManager.LoadSceneAsync("MainMenu");
+                        yield return new WaitForSeconds(0.5f);
+                        BackendServerManager.GetInstance().CheckTableRow((bool result) =>
+                        {
+                            if(result) SceneManager.LoadSceneAsync("MainMenu");
+                            else stateText.text = "<Color=red>상태</Color>\n예상치 못한 에러 발생";
+
+                        });
                         break;
                     }
                 }
