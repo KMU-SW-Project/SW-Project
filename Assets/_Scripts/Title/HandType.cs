@@ -28,28 +28,28 @@ public class HandType : MonoBehaviour
 
     public void SetHandType(SteamVR_Input_Sources type)
     {
-        GetAllComponent();
+    //    GetAllComponent();
 
-        SteamInputModule.instance.m_Source = type;
+    //  //  SteamInputModule.instance.m_Source = type;
 
-        if (type == SteamVR_Input_Sources.LeftHand)
-        {
-            _LR = left.transform.GetChild(1).GetComponent<LineRenderer>();
+    //    if (type == SteamVR_Input_Sources.LeftHand)
+    //    {
+    //        _LR = left.transform.GetChild(1).GetComponent<LineRenderer>();
 
-            canvas.worldCamera = left.transform.GetChild(1).GetComponent<Camera>();
-            SteamInputModule.instance.pointer = left.transform.GetChild(1).GetComponent<Pointer>();
+    //        canvas.worldCamera = left.transform.GetChild(1).GetComponent<Camera>();
+    //      //  SteamInputModule.instance.pointer = left.transform.GetChild(1).GetComponent<Pointer>();
 
-            _LR.startColor = Color.red;
+    //        _LR.startColor = Color.red;
 
-        }
-        else
-        {
-            _LR = right.transform.GetChild(1).GetComponent<LineRenderer>();
+    //    }
+    //    else
+    //    {
+    //        _LR = right.transform.GetChild(1).GetComponent<LineRenderer>();
 
-            canvas.worldCamera = right.transform.GetChild(1).GetComponent<Camera>();
-            SteamInputModule.instance.pointer = right.transform.GetChild(1).GetComponent<Pointer>();
+    //        canvas.worldCamera = right.transform.GetChild(1).GetComponent<Camera>();
+    //      //  SteamInputModule.instance.pointer = right.transform.GetChild(1).GetComponent<Pointer>();
 
-            _LR.startColor = Color.red;
-        }
+    //        _LR.startColor = Color.red;
+    //    }
     }
 }
