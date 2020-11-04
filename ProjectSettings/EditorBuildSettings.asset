@@ -12,8 +12,14 @@ EditorBuildSettings:
     path: Assets/_Scenes/MainMenu.unity
     guid: b09538ae8b53de540b6e525b7b21250c
   - enabled: 1
-    path: Assets/_Scenes/Ingame.unity
-    guid: 063f6e2d0d7df524bb82d6876dbc08ad
+    path: Assets/_Scenes/Ingame/Infinity.unity
+    guid: 832aba45bae5a9c41ba0acd5d26830a9
+  - enabled: 1
+    path: Assets/_Scenes/Ingame/Training.unity
+    guid: c750c0077f5cf134da4fc1e4e97ce2c1
+  - enabled: 1
+    path: Assets/_Scenes/Ingame/vsAI.unity
+    guid: b565359357a506b44bf1da55ca346e10
   m_configObjects:
     com.unity.xr.management.loader_settings: {fileID: 11400000, guid: 7bdffa258aad5f84ebb443bd3832c467,
       type: 2}

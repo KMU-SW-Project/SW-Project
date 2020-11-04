@@ -22,8 +22,6 @@ public class BackendServerManager : MonoBehaviour
 
     private void Awake()
     {
-        if (instance != null) Destroy(gameObject);
-
         instance = this;
         DontDestroyOnLoad(gameObject);
     }

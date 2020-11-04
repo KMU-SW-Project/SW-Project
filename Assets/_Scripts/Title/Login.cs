@@ -9,19 +9,11 @@ using System;
 
 public class Login : MonoBehaviour
 {
-    // 에러 관련
-    public GameObject errorUI;
-    Text errorText;
-
     // 닉네임
-    public GameObject nicknameUI;
-    public GameObject keyboard;
-
-    [SerializeField]
-    InputField nicknameField;
+    public InputField nicknameField;
+    public GameObject test;
 
     // 주 손 선택
-    public GameObject selectHandUI;
     string handType;
 
     // 컴포넌트
@@ -37,6 +29,7 @@ public class Login : MonoBehaviour
     void HandCheck()
     {
         path = Application.persistentDataPath + "/Handdata.txt";
+        print(path);
 
         if (File.Exists(path))
         {
@@ -45,13 +38,13 @@ public class Login : MonoBehaviour
 
             if (handType == "left") HandType.instance.SetHandType(Valve.VR.SteamVR_Input_Sources.LeftHand);
             else if (handType == "right") HandType.instance.SetHandType(Valve.VR.SteamVR_Input_Sources.RightHand);
-            else selectHandUI.SetActive(true);
+            else TitleManager.instance.ActiveOnUI("SelectHand");
 
             Init();
         }
         else
         {
-            selectHandUI.SetActive(true);
+            TitleManager.instance.ActiveOnUI("SelectHand");
         }
     }
 
@@ -59,14 +52,11 @@ public class Login : MonoBehaviour
     void Init()
     {
         path = Application.persistentDataPath + "/data.txt";
-
-
-        nicknameField = nicknameUI.transform.GetChild(2).GetComponent<InputField>();
-        errorText = errorUI.transform.GetChild(2).GetComponent<Text>();
+                
 
         if (!File.Exists(path)) File.Create(path);
 
-        stateText.text = "<Color=red>상태</Color>\n로그인 대기중";
+        stateText.text = "<Color=red>상태</Color>\n대기중";
         //  userID = CreateUser(true);
     }
 
@@ -100,13 +90,12 @@ public class Login : MonoBehaviour
                     if (!BackendServerManager.GetInstance().NIcknameCheck())
                     {
                         stateText.text = "<Color=red>상태</Color>\n닉네임 설정 중";
-                        nicknameUI.SetActive(true);
-                        keyboard.SetActive(true);
+                        TitleManager.instance.ActiveOnUI("Nickname");
                         break;
                     }
                     else
                     {
-                        stateText.text = "<Color=red>상태</Color>\n잠시후 메인메뉴로 이동합니다.";
+                        stateText.text = "<Color=red>상태</Color>\n잠시만 기다려주세요.";
                         yield return new WaitForSeconds(0.5f);
                         BackendServerManager.GetInstance().CheckTableRow((bool result) =>
                         {
@@ -120,29 +109,34 @@ public class Login : MonoBehaviour
             }
             else
             {
-                stateText.text = "<Color=red>상태</Color>\n[OFFLINE]\n잠시후 메인메뉴로 이동합니다.";
+                stateText.text = "<Color=red>상태</Color>\n[OFFLINE]\n잠시만 기다려주세요.";
                 yield return new WaitForSeconds(0.3f);
-                SceneManager.LoadSceneAsync("MainMenu");
+                test.SetActive(true);
+               // SceneManager.LoadSceneAsync("MainMenu");
                 break;
             }
 
         }
     }
 
-    public void StartLoginBtn() => StartCoroutine(StartLogin());
+    public void StartLoginBtn()
+    {
+        if (TitleManager.instance.uiOn) return;
+
+        StartCoroutine(StartLogin());
+    }
 
     public void SetNickname()
     {
-        Button btn = EventSystem.current.currentSelectedGameObject.GetComponent<Button>();
-        btn.interactable = false;
+        TitleManager.instance.ButtonOff("Nickname", false);
 
         BackendServerManager.GetInstance().SetNickname(nicknameField.text, (bool result, string error) =>
         {
             if (!result)
             {
-                btn.interactable = true;
-                errorUI.SetActive(true);
-                errorText.text = error;
+                TitleManager.instance.ButtonOff("Nickname", true);
+                TitleManager.instance.ActiveOnUI("Error");
+                TitleManager.instance.SerErrorMessage(error);
                 return;
             }
 
