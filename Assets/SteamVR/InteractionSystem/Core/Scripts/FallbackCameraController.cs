@@ -96,10 +96,11 @@ namespace Valve.VR.InteractionSystem
 		{
 			if ( showInstructions )
 			{
-				GUI.Label( new Rect( 10.0f, 10.0f, 600.0f, 400.0f ),
-					"WASD EQ/Arrow Keys to translate the camera\n" +
-					"Right mouse click to rotate the camera\n" +
-					"Left mouse click for standard interactions.\n" );
+                GUI.backgroundColor = Color.yellow;
+                GUI.Label( new Rect( 10.0f, 10.0f, 600.0f, 400.0f ),
+					"방향키 : 카메라 이동\n" +
+                    "왼쪽 마우스 : 상호작용\n" +
+                    "오른쪽 마우스 : 카메라 회전\n");
 			}
 		}
 	}
