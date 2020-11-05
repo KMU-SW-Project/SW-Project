@@ -389,18 +389,18 @@ namespace Valve.VR.InteractionSystem
 
 			string text = ( rigSteamVR.activeSelf ) ? "2D Debug" : "VR";
 
-			if ( GUI.Button( new Rect( left, top, width, height ), text ) )
-			{
-				if ( rigSteamVR.activeSelf )
-				{
-					ActivateRig( rig2DFallback );
-				}
-				else
-				{
-					ActivateRig( rigSteamVR );
-				}
-			}
-		}
+            if (GUI.Button(new Rect(left, top, width, height), text))
+            {
+                if (rigSteamVR.activeSelf)
+                {
+                    ActivateRig(rig2DFallback);
+                }
+                else
+                {
+                    ActivateRig(rigSteamVR);
+                }
+            }
+        }
 
 
 		//-------------------------------------------------
