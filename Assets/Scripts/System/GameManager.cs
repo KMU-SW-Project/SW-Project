@@ -26,7 +26,9 @@ public class GameManager : MonoBehaviour
         return instance;
     }
     #endregion
-
+   
     public string handType;
+    public int currentAIStage;
+
 
 }

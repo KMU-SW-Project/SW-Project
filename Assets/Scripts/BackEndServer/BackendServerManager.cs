@@ -5,10 +5,20 @@ using BackEnd;
 using LitJson;
 using System;
 
+
+public enum GameMode
+{
+    Character,
+    Infinity,
+    vsAI,
+    Training
+}
+
 public class UserInfoData
 {
     public string userNickname;
     public int userCharacter;
+    public int userClearAI;
     public string charIndate;
 }
 
@@ -19,6 +29,7 @@ public partial class BackendServerManager : MonoBehaviour
 
     private void Awake()
     {
+        if (instance != null) Destroy(instance);
         instance = this;
         DontDestroyOnLoad(gameObject);
     }
@@ -45,10 +56,11 @@ public partial class BackendServerManager : MonoBehaviour
     const string DATA_SERVER_JSONROWS = "rows";
     const string DATA_SERVER_TABLENAME = "characterInfo";
     const string DATA_SERVER_SCHEMANAME_CHARACTER = "character";
+    const string DATA_SERVER_SCHEMANAME_AI = "vsAI";
+    const string DATA_SERVER_SCHEMANAME_INFINITY = "infinity";
     const string DATA_SERVER_PLEYER_NICKNAME = "nickname";
-
     #endregion
-
+    
     public UserInfoData UserInfoData = new UserInfoData();
 
     string userAccountInfo;
@@ -77,55 +89,84 @@ public partial class BackendServerManager : MonoBehaviour
     {
         print("로그인 시도 ID : " + ID);
 
-        BackendReturnObject BRO = Backend.BMember.CustomLogin(ID, ID);
+        try
+        {
+            BackendReturnObject BRO = Backend.BMember.CustomLogin(ID, ID);
 
-        if (BRO.IsSuccess()) return true;
-        else return ServerSignUp(ID);
-
+            if (BRO.IsSuccess()) return true;
+            else return ServerSignUp(ID);
+        }
+        catch (Exception e)
+        {
+            print($"로그인 부분 : {e}");
+            return false;
+        }
     }
 
     // 회원가입
     public bool ServerSignUp(string ID)
     {
-        BackendReturnObject BRO = Backend.BMember.CustomSignUp(ID, ID);
+        try
+        {
+            BackendReturnObject BRO = Backend.BMember.CustomSignUp(ID, ID);
 
-        if (BRO.IsSuccess()) return ServerLogin(ID);
-        else return false;
+            if (BRO.IsSuccess()) return ServerLogin(ID);
+            else return false;
+        }
+        catch (Exception e)
+        {
+            print($"회원가입 부분 : {e}");
+            return false;
+        }
+
     }
 
     // 닉네임 유무 체크
     public bool NIcknameCheck()
     {
-        BackendReturnObject BRO = Backend.BMember.GetUserInfo();
-
-        if (BRO.IsSuccess())
+        try
         {
-            JsonData data = BRO.GetReturnValuetoJSON()["row"];
+            BackendReturnObject BRO = Backend.BMember.GetUserInfo();
 
-            if (data[DATA_SERVER_PLEYER_NICKNAME] == null) return false;
-            else
+            if (BRO.IsSuccess())
             {
-                UserInfoData.userNickname = data[DATA_SERVER_PLEYER_NICKNAME].ToString();
-                return true;
-            }
-        }
+                JsonData data = BRO.GetReturnValuetoJSON()["row"];
 
-        return false;
+                if (data[DATA_SERVER_PLEYER_NICKNAME] == null) return false;
+                else
+                {
+                    UserInfoData.userNickname = data[DATA_SERVER_PLEYER_NICKNAME].ToString();
+                    return true;
+                }
+            }
+            else return false;
+        }
+        catch (Exception e)
+        {
+            print($"닉네임 체크 부분 : {e}");
+            return false;
+        }
     }
 
     // 닉네임 생성
     public void SetNickname(string nickname, Action<bool, string> func)
     {
-        BackendReturnObject BRO = Backend.BMember.UpdateNickname(nickname);
-
-        if (BRO.IsSuccess())
+        try
         {
-            func(true, string.Empty);
-            return;
+            BackendReturnObject BRO = Backend.BMember.UpdateNickname(nickname);
+
+            if (BRO.IsSuccess())
+            {
+                func(true, string.Empty);
+                return;
+            }
+
+            func(false, string.Format(BRO.GetMessage()));
         }
-
-        func(false, string.Format(BRO.GetMessage()));
-
+        catch (Exception e)
+        {
+            print($"닉네임 생성 부분 : {e}");
+        }
     }
 
     // 닉네임 가져오기
@@ -139,57 +180,127 @@ public partial class BackendServerManager : MonoBehaviour
     // 계정에 기본적인 데이터 정보가 있는지 확인
     public void CheckTableRow(Action<bool> func)
     {
-        Param where = new Param(); // 검색용 where절 생성
-        BackendReturnObject bro = Backend.GameSchemaInfo.Get(DATA_SERVER_TABLENAME, where, 10);
-
-        if (bro.GetErrorCode() == "NotFoundException")
-            func(CreateDataRow());
-        else if (bro.IsSuccess())
+        try
         {
-            UserInfoData.charIndate = bro.GetReturnValuetoJSON()[DATA_SERVER_JSONROWS][0]["inDate"]["S"].ToString();
+            Param where = new Param(); // 검색용 where절 생성
+            BackendReturnObject bro = Backend.GameSchemaInfo.Get(DATA_SERVER_TABLENAME, where, 10);
 
-            bro = Backend.GameSchemaInfo.Get(DATA_SERVER_TABLENAME, UserInfoData.charIndate);
+            if (bro.GetErrorCode() == "NotFoundException")
+                func(CreateDataRow());
+            else if (bro.IsSuccess())
+            {
+                UserInfoData.charIndate = bro.GetReturnValuetoJSON()[DATA_SERVER_JSONROWS][0]["inDate"]["S"].ToString();
 
-            string data = bro.GetReturnValuetoJSON()[DATA_SERVER_JSONROWS][0][DATA_SERVER_SCHEMANAME_CHARACTER]["N"].ToString();
+                bro = Backend.GameSchemaInfo.Get(DATA_SERVER_TABLENAME, UserInfoData.charIndate);
 
-            UserInfoData.userCharacter = int.Parse(data);
+                JsonData data = bro.GetReturnValuetoJSON()[DATA_SERVER_JSONROWS][0];
+                UserInfoData.userCharacter = int.Parse(data[DATA_SERVER_SCHEMANAME_CHARACTER]["N"].ToString());
+                func(GetUserData());
+            }
+        }
+        catch (Exception e)
+        {
+            print($"최초 테이블 체크 부분 : {e}");
+        }
 
-            func(true);
+    }
+
+    public bool GetUserData()
+    {
+        try
+        {
+            BackendReturnObject bro = Backend.GameSchemaInfo.Get(DATA_SERVER_TABLENAME, UserInfoData.charIndate);
+
+            if (bro.IsSuccess())
+            {
+                JsonData data = bro.GetReturnValuetoJSON()[DATA_SERVER_JSONROWS][0];
+                UserInfoData.userClearAI = int.Parse(data[DATA_SERVER_SCHEMANAME_AI]["N"].ToString());
+                return true;
+            }
+            else return false;
+        }
+        catch (Exception e)
+        {           
+            print($"데이터 가져오는 부분 : {e}");
+            return false;
         }
     }
 
     // 계졍에 기본적인 데이터 삽입
     bool CreateDataRow()
     {
-        Param data = new Param();
-        data.Add(DATA_SERVER_SCHEMANAME_CHARACTER, 0);
+        try
+        {
+            Param data = new Param();
+            data.Add(DATA_SERVER_SCHEMANAME_CHARACTER, 0);
+            data.Add(DATA_SERVER_SCHEMANAME_AI, 0);
 
-        BackendReturnObject bro = Backend.GameSchemaInfo.Insert(DATA_SERVER_TABLENAME, data);
-        if (bro.IsSuccess())
-        {
-            UserInfoData.userCharacter = 0;
-            print("생성 성공" + bro.GetErrorCode());
-            return true;
+            BackendReturnObject bro = Backend.GameSchemaInfo.Insert(DATA_SERVER_TABLENAME, data);
+            if (bro.IsSuccess())
+            {
+                UserInfoData.userCharacter = 0;
+                print("생성 성공" + bro.GetErrorCode());
+                return true;
+            }
+            else
+            {
+                print(bro.GetErrorCode());
+                return false;
+            }
         }
-        else
+        catch (Exception e)
         {
-            print(bro.GetErrorCode());
+            print($"데이터 삽입 부분 : {e}");
             return false;
         }
+
     }
 
     // 데이터 수정
-    public void SetData(string tableName, Action<bool> func)
+    public void SetData(GameMode mode, Action<bool> func)
     {
-        string inDate = string.Empty;
-        Param param = new Param();
+        try
+        {
+            string inDate = string.Empty;
+            Param param = new Param();
 
-        param.Add(DATA_SERVER_SCHEMANAME_CHARACTER, UserInfoData.userCharacter);
-        inDate = UserInfoData.charIndate;
+            if (mode == GameMode.Character)
+                param.Add(DATA_SERVER_SCHEMANAME_CHARACTER, UserInfoData.userCharacter);
+            
+            inDate = UserInfoData.charIndate;
 
-        BackendReturnObject bro = Backend.GameSchemaInfo.Update(tableName, inDate, param);
+            BackendReturnObject bro = Backend.GameSchemaInfo.Update(DATA_SERVER_TABLENAME, inDate, param);
 
-        func(bro.IsSuccess());
+            func(bro.IsSuccess());
+        }
+        catch (Exception e)
+        {
+            print($"데이터 수정 부분 : {e}");
+        }
+    }
+
+    public void SetData(GameMode mode,int value, Action<bool> func)
+    {
+        try
+        {
+            string inDate = string.Empty;
+            Param param = new Param();
+
+            if (mode == GameMode.vsAI)
+                param.Add(DATA_SERVER_SCHEMANAME_AI, value);
+            else if (mode == GameMode.Infinity)
+                param.Add(DATA_SERVER_SCHEMANAME_INFINITY, value);
+
+            inDate = UserInfoData.charIndate;
+
+            BackendReturnObject bro = Backend.GameSchemaInfo.Update(DATA_SERVER_TABLENAME, inDate, param);
+
+            func(bro.IsSuccess());
+        }
+        catch (Exception e)
+        {
+            print($"데이터 수정 부분 : {e}");
+        }
     }
     #endregion
 }
