@@ -35,14 +35,8 @@ public class Keyboard : MonoBehaviour
         else nickname.text += key.ToUpper();
     }
 
-    public void KeyBackspace()
-    {
-        nickname.text = nickname.text.Substring(0, nickname.text.Length-1);
-    }
+    public void KeyBackspace() => nickname.text = nickname.text.Substring(0, nickname.text.Length - 1);
 
-    public void KeyEnter()
-    {
-        _Login.SetNickname();
-    }
+    public void KeyEnter() => _Login.SetNickname();
 
 }
