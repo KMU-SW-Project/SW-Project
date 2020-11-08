@@ -4,7 +4,7 @@ using UnityEngine.SceneManagement;
 using BackEnd;
 using LitJson;
 using System;
-
+using System.IO;
 
 public enum GameMode
 {
@@ -22,7 +22,14 @@ public class UserInfoData
     public string charIndate;
 }
 
-public partial class BackendServerManager : MonoBehaviour
+[System.Serializable]
+public  class AccountData
+{
+    public string userID;
+    public string handType;
+}
+
+public class BackendServerManager : MonoBehaviour
 {
     #region 싱글톤
     private static BackendServerManager instance;
@@ -31,6 +38,8 @@ public partial class BackendServerManager : MonoBehaviour
     {
         if (instance != null) Destroy(instance);
         instance = this;
+        path = Application.dataPath + "/data.json";
+
         DontDestroyOnLoad(gameObject);
     }
 
@@ -62,9 +71,11 @@ public partial class BackendServerManager : MonoBehaviour
     #endregion
     
     public UserInfoData UserInfoData = new UserInfoData();
+    public AccountData accountData = new AccountData();
 
     string userAccountInfo;
     public bool isConnected = false;
+    string path;
 
     void Start()
     {
@@ -73,6 +84,7 @@ public partial class BackendServerManager : MonoBehaviour
             if (Backend.IsInitialized)
             {
                 isConnected = true;
+                
                 TitleManager.instance.SetTitleLog(DEBUG_SERVER_ONLINE);
             }
             else
@@ -157,7 +169,7 @@ public partial class BackendServerManager : MonoBehaviour
 
             if (BRO.IsSuccess())
             {
-                func(true, string.Empty);
+                func(true, string.Empty);               
                 return;
             }
 
@@ -302,5 +314,49 @@ public partial class BackendServerManager : MonoBehaviour
             print($"데이터 수정 부분 : {e}");
         }
     }
+    #endregion
+
+    #region 로컬 데이터 관련
+    // json 파일 저장
+    public void CreateJsonFile()
+    {
+        try
+        {
+            // json 데이터 제작
+            string jsonData = JsonUtility.ToJson(accountData);
+
+            // 파일로 저장
+            File.WriteAllText(path, jsonData);
+        }
+        catch (Exception e)
+        {
+            print("json 파일 만드는 곳 :" + e);
+        }
+    }
+
+   public bool LoadJsonFile()
+    {
+        try
+        {
+            string data = File.ReadAllText(path);
+
+            accountData = JsonUtility.FromJson<AccountData>(data);
+
+            return true;
+        }
+        catch (Exception e)
+        {
+            print("json 파일 로드하는 곳 :" + e);
+            return false;
+        }
+       
+    }
+
+    public bool CheckFile()
+    {
+        if (File.Exists(path)) return true;
+        else return false;
+    }
+
     #endregion
 }

@@ -57,11 +57,13 @@ public class TitleManager : MonoBehaviour
     // 주 손을 선택했는지 판단
     void HandCheck()
     {
-        if (File.Exists(path))
+        if (BackendServerManager.GetInstance().CheckFile())
         {
-            string handType = File.ReadAllText(path);
-            GameManager.GetInstance().handType = handType;
-            print(handType);
+            BackendServerManager.GetInstance().LoadJsonFile();
+            print(BackendServerManager.GetInstance().accountData.handType);
+            //string handType = File.ReadAllText(path);
+            //GameManager.GetInstance().handType = handType;
+            //print(handType);
             // 추후 작업 예정
             // 왼손 오른손 선택한 쪽에 총을 쥐어줌
             //if (handType == "left") HandType.instance.SetHandType(Valve.VR.SteamVR_Input_Sources.LeftHand);
@@ -91,8 +93,10 @@ public class TitleManager : MonoBehaviour
     {
         try
         {
-            if (type == 0) File.WriteAllText(path, HandType.left.ToString());
-            else File.WriteAllText(path, HandType.right.ToString());
+            if (type == 0) BackendServerManager.GetInstance().accountData.handType= HandType.left.ToString();// File.WriteAllText(path, HandType.left.ToString());
+            else BackendServerManager.GetInstance().accountData.handType = HandType.right.ToString();// File.WriteAllText(path, HandType.right.ToString());
+
+            BackendServerManager.GetInstance().CreateJsonFile();
 
             PassiveUI(UIList.selectHand);
         }
