@@ -6,10 +6,20 @@ using UnityEngine.UI;
 public class LoadData : MonoBehaviour
 {
     public Text nickname;
+    ModeManager modeManager;
 
-    // Start is called before the first frame update
+    private void Awake()
+    {
+        modeManager = GetComponent<ModeManager>();       
+    }
+
     void Start()
     {
-        nickname.text = BackendServerManager.GetInstance().UserInfoData.userNickname;   
+        if (BackendServerManager.GetInstance().isConnected)
+        {
+            nickname.text = BackendServerManager.GetInstance().UserInfoData.userNickname;
+            modeManager.ReSetMode();
+        }
+        else nickname.text = "OFFLINE";
     }
 }

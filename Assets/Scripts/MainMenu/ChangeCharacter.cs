@@ -29,17 +29,26 @@ public class ChangeCharacter : MonoBehaviour
         }
         else if(type == 2)
         {
-            BackendServerManager.GetInstance().UserInfoData.userCharacter = page;
-
-            BackendServerManager.GetInstance().SetData("characterInfo", (bool result) =>
+            if (BackendServerManager.GetInstance().isConnected)
             {
-                if (result)
+                BackendServerManager.GetInstance().UserInfoData.userCharacter = page;
+
+                BackendServerManager.GetInstance().SetData(GameMode.Character, (bool result) =>
                 {
-                    mainUI.SetActive(true);
-                    charUI.SetActive(false);
-                }
-                else print("[캐릭터 저장] 예기치 못한 에러로 저장 못함");
-            });
+                    if (result)
+                    {
+                        mainUI.SetActive(true);
+                        charUI.SetActive(false);
+                    }
+                    else print("[캐릭터 저장] 예기치 못한 에러로 저장 못함");
+                });
+            }
+            else
+            {
+                mainUI.SetActive(true);
+                charUI.SetActive(false);
+            }
+           
         }
         else if(type == 3)
         {
