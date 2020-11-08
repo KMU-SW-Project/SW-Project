@@ -6,7 +6,6 @@ using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using UnityEngine.EventSystems;
 using System;
-using System.Text;
 
 public class Login : MonoBehaviour
 {
@@ -34,6 +33,11 @@ public class Login : MonoBehaviour
     string path;
     string userID;
 
+    private void Start()
+    {
+        path = Application.persistentDataPath + "/data.txt";
+    }
+
     // 로그인 시도
     IEnumerator StartLogin()
     {
@@ -42,11 +46,8 @@ public class Login : MonoBehaviour
             if (BackendServerManager.GetInstance().isConnected)
             {
                 // 아이디 생성 또는 재생성
-                CheckID((bool result, string id) =>
-                {
-                    if (result) userID = id;
-                    else CreateID();
-                });
+                if (CheckID() == null) userID = CreateID();
+                else userID = CheckID();
 
                 stateText.text = DEBUG_SERVER_LOGING;
 
@@ -55,9 +56,7 @@ public class Login : MonoBehaviour
                 else
                 {
                     stateText.text = DEBUG_SERVER_LOGIN_SUCCESS;
-                    BackendServerManager.GetInstance().CreateJsonFile();
                     yield return new WaitForSeconds(0.5f);
-
                     if (!BackendServerManager.GetInstance().NIcknameCheck())
                     {
                         stateText.text = DEBUG_SERVER_SETTING_NICKNAME;
@@ -66,16 +65,11 @@ public class Login : MonoBehaviour
                     }
                     else
                     {
-
                         stateText.text = DEBUG_SERVER_WAITING;
                         yield return new WaitForSeconds(0.3f);
                         BackendServerManager.GetInstance().CheckTableRow((bool result) =>
                         {
-
-                            if (result)
-                            {
-                                nextScene.SetActive(true);
-                            }
+                            if (result) nextScene.SetActive(true);
                             else stateText.text = DEBUG_SERVER_ERROR;
 
                         });
@@ -90,6 +84,7 @@ public class Login : MonoBehaviour
                 nextScene.SetActive(true);
                 break;
             }
+
         }
     }
 
@@ -115,39 +110,34 @@ public class Login : MonoBehaviour
                 return;
             }
 
-            BackendServerManager.GetInstance().UserInfoData.userNickname = nicknameField.text;
             nextScene.SetActive(true);
         });
     }
 
     // 로컬에 데이터가 있는지 확인
-    private void CheckID(Action <bool, string> returnData)
+    private string CheckID()
     {
         stateText.text = DEBUG_LOCAL_CHECKDATA;
 
-        //string userAccountInfo = "";
+        string userAccountInfo = "";
 
-        //StreamReader textRead = File.OpenText(path);
-        //userAccountInfo = textRead.ReadLine();
-        //textRead.Dispose();
-        //textRead.Close();
-        string id = BackendServerManager.GetInstance().accountData.userID;
-        if (id == "") returnData(false, "");
-        else returnData(true, id);
+        StreamReader textRead = File.OpenText(path);
+        userAccountInfo = textRead.ReadLine();
+        textRead.Dispose();
+        textRead.Close();
+
+        return userAccountInfo;
     }
 
     // 랜덤 아이디생성후 파일 저장
     private string CreateID()
     {
-        print("id 제작중");
         stateText.text = DEBUG_LOCAL_CREATEDATA;
 
         string newID;
 
         newID = GetRandomInfo();
-
-        BackendServerManager.GetInstance().accountData.userID = newID;
-        userID = newID;
+        File.WriteAllText(path, newID);
 
         return newID;
     }
