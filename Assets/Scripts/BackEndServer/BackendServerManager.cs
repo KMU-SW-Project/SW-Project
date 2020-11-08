@@ -6,6 +6,7 @@ using LitJson;
 using System;
 using System.IO;
 
+
 public enum GameMode
 {
     Character,
@@ -16,20 +17,20 @@ public enum GameMode
 
 public class UserInfoData
 {
-    public string userNickname;
+    public string userNickname = null;
     public int userCharacter;
     public int userClearAI;
     public string charIndate;
 }
 
 [System.Serializable]
-public  class AccountData
+public class AccountData
 {
     public string userID;
     public string handType;
 }
 
-public class BackendServerManager : MonoBehaviour
+public partial class BackendServerManager : MonoBehaviour
 {
     #region 싱글톤
     private static BackendServerManager instance;
@@ -39,7 +40,6 @@ public class BackendServerManager : MonoBehaviour
         if (instance != null) Destroy(instance);
         instance = this;
         path = Application.dataPath + "/data.json";
-
         DontDestroyOnLoad(gameObject);
     }
 
@@ -63,13 +63,14 @@ public class BackendServerManager : MonoBehaviour
 
     // 데이터
     const string DATA_SERVER_JSONROWS = "rows";
+    const string DATA_SERVER_INDATE = "inDate";
     const string DATA_SERVER_TABLENAME = "characterInfo";
     const string DATA_SERVER_SCHEMANAME_CHARACTER = "character";
     const string DATA_SERVER_SCHEMANAME_AI = "vsAI";
     const string DATA_SERVER_SCHEMANAME_INFINITY = "infinity";
     const string DATA_SERVER_PLEYER_NICKNAME = "nickname";
     #endregion
-    
+
     public UserInfoData UserInfoData = new UserInfoData();
     public AccountData accountData = new AccountData();
 
@@ -84,7 +85,6 @@ public class BackendServerManager : MonoBehaviour
             if (Backend.IsInitialized)
             {
                 isConnected = true;
-                
                 TitleManager.instance.SetTitleLog(DEBUG_SERVER_ONLINE);
             }
             else
@@ -118,6 +118,7 @@ public class BackendServerManager : MonoBehaviour
     // 회원가입
     public bool ServerSignUp(string ID)
     {
+        print("회원가입");
         try
         {
             BackendReturnObject BRO = Backend.BMember.CustomSignUp(ID, ID);
@@ -169,7 +170,7 @@ public class BackendServerManager : MonoBehaviour
 
             if (BRO.IsSuccess())
             {
-                func(true, string.Empty);               
+                func(true, string.Empty);
                 return;
             }
 
@@ -201,12 +202,12 @@ public class BackendServerManager : MonoBehaviour
                 func(CreateDataRow());
             else if (bro.IsSuccess())
             {
-                UserInfoData.charIndate = bro.GetReturnValuetoJSON()[DATA_SERVER_JSONROWS][0]["inDate"]["S"].ToString();
-
                 bro = Backend.GameSchemaInfo.Get(DATA_SERVER_TABLENAME, UserInfoData.charIndate);
 
                 JsonData data = bro.GetReturnValuetoJSON()[DATA_SERVER_JSONROWS][0];
                 UserInfoData.userCharacter = int.Parse(data[DATA_SERVER_SCHEMANAME_CHARACTER]["N"].ToString());
+                UserInfoData.charIndate = data[DATA_SERVER_INDATE]["S"].ToString();
+
                 func(GetUserData());
             }
         }
@@ -232,7 +233,7 @@ public class BackendServerManager : MonoBehaviour
             else return false;
         }
         catch (Exception e)
-        {           
+        {
             print($"데이터 가져오는 부분 : {e}");
             return false;
         }
@@ -248,10 +249,12 @@ public class BackendServerManager : MonoBehaviour
             data.Add(DATA_SERVER_SCHEMANAME_AI, 0);
 
             BackendReturnObject bro = Backend.GameSchemaInfo.Insert(DATA_SERVER_TABLENAME, data);
+
             if (bro.IsSuccess())
             {
                 UserInfoData.userCharacter = 0;
-                print("생성 성공" + bro.GetErrorCode());
+                UserInfoData.userClearAI = 0;
+                UserInfoData.charIndate = bro.GetInDate();
                 return true;
             }
             else
@@ -278,7 +281,7 @@ public class BackendServerManager : MonoBehaviour
 
             if (mode == GameMode.Character)
                 param.Add(DATA_SERVER_SCHEMANAME_CHARACTER, UserInfoData.userCharacter);
-            
+
             inDate = UserInfoData.charIndate;
 
             BackendReturnObject bro = Backend.GameSchemaInfo.Update(DATA_SERVER_TABLENAME, inDate, param);
@@ -288,10 +291,12 @@ public class BackendServerManager : MonoBehaviour
         catch (Exception e)
         {
             print($"데이터 수정 부분 : {e}");
+            print(UserInfoData.charIndate);
+            print(UserInfoData.userCharacter);
         }
     }
 
-    public void SetData(GameMode mode,int value, Action<bool> func)
+    public void SetData(GameMode mode, int value, Action<bool> func)
     {
         try
         {
@@ -334,7 +339,7 @@ public class BackendServerManager : MonoBehaviour
         }
     }
 
-   public bool LoadJsonFile()
+    public bool LoadJsonFile()
     {
         try
         {
@@ -349,7 +354,7 @@ public class BackendServerManager : MonoBehaviour
             print("json 파일 로드하는 곳 :" + e);
             return false;
         }
-       
+
     }
 
     public bool CheckFile()
