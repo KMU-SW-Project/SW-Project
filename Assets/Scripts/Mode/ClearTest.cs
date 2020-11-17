@@ -13,7 +13,7 @@ public class ClearTest : MonoBehaviour
         {
             if (result)
             {
-                AIMoney.Money[GameManager.GetInstance().currentAIStage] = -1;
+                AIMode.Money[GameManager.GetInstance().currentAIStage] = -1;
                 BackendServerManager.GetInstance().UserInfoData.userClearAI = GameManager.GetInstance().currentAIStage + 1;
                 nextScene.SetActive(true);
             }
