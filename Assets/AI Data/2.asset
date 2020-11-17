@@ -10,11 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7b721978fdb3f5642aedc51f75d66e07, type: 3}
-  m_Name: DummyEnemy
+  m_Name: 2
   m_EditorClassIdentifier: 
-  enemyName: 
-  enemyID: 0
-  diffculty: 0
-  bountyMoney: 0
-  fireTime: 0
-  model: {fileID: 0}
+  enemyName: 2
+  enemyID: 2
+  diffculty: 2
+  bountyMoney: 20
+  fireTime: 0.8
+  model: {fileID: 1876497922086962, guid: 7aad5b0274fd2894eafec31a58e26a32, type: 3}

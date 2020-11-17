@@ -4,9 +4,10 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
-public static class AIMoney
+public static class AIMode
 {
     public static int[] Money = { 10, 20, 30, 40, 50 };
+    public static int currentAI;
 }
 
 public class ModeManager : MonoBehaviour
@@ -16,14 +17,15 @@ public class ModeManager : MonoBehaviour
     [Header("vsAI")]
     public GameObject originCharacter;
     public GameObject aiCharacter;
+    public EnemyAI[] aiData;
     public GameObject aiUI;
     public Text aiMoneyText;
-    GameObject[] aiCharacterList;
-    int currentAI;
+
+    GameObject[] aiCharacterList;   
 
     private void Awake()
     {
-        currentAI = 0;
+        AIMode.currentAI = 0;
         aiCharacterList = new GameObject[aiCharacter.transform.childCount];
 
         for (int i = 0; i < aiCharacter.transform.childCount; i++)
@@ -77,37 +79,36 @@ public class ModeManager : MonoBehaviour
     {
         if(type == 0)
         {
-            if (currentAI == 0)
-                currentAI = aiCharacterList.Length - 1;
-            else currentAI--;            
+            if (AIMode.currentAI == 0)
+                AIMode.currentAI = aiCharacterList.Length - 1;
+            else AIMode.currentAI--;            
         }
         else if(type == 1)
         {
-            if (currentAI == aiCharacterList.Length - 1)
-                currentAI = 0;
-            else currentAI++;
+            if (AIMode.currentAI == aiCharacterList.Length - 1)
+                AIMode.currentAI = 0;
+            else AIMode.currentAI++;
         }
         else
         {
-            currentAI = BackendServerManager.GetInstance().UserInfoData.userClearAI;
+            AIMode.currentAI = BackendServerManager.GetInstance().UserInfoData.userClearAI;
 
-            for (int i = 0; i < currentAI; i++)
-                AIMoney.Money[i] = -1;
-            
+            for (int i = 0; i < AIMode.currentAI; i++)
+                AIMode.Money[i] = -1;            
         }
 
         for (int i = 0; i < aiCharacterList.Length; i++)
             aiCharacterList[i].SetActive(false);
 
-        if (AIMoney.Money[currentAI] != -1) aiMoneyText.text = $"$ {AIMoney.Money[currentAI]}";
+        if (AIMode.Money[AIMode.currentAI] != -1) aiMoneyText.text = $"$ {aiData[AIMode.currentAI]}";
         else aiMoneyText.text = "CLEAR";
 
-        aiCharacterList[currentAI].SetActive(true);
+        aiCharacterList[AIMode.currentAI].SetActive(true);
     }
 
    public void StartAIMode()
     {
-        GameManager.GetInstance().currentAIStage = currentAI;
+        GameManager.GetInstance().currentAIStage = AIMode.currentAI;
         SceneManager.LoadSceneAsync("vsAI");
     }
     #endregion
