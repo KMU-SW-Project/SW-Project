@@ -15,7 +15,7 @@ public class ChangeCharacter : MonoBehaviour
 
     private void Start()
     {
-        page = BackendServerManager.GetInstance().UserInfoData.userCharacter;
+        page = GameManager.GetInstance().userData.userCharacter;
 
         SetCharacter(page);
     }
@@ -31,7 +31,7 @@ public class ChangeCharacter : MonoBehaviour
         {
             if (BackendServerManager.GetInstance().isConnected)
             {
-                BackendServerManager.GetInstance().UserInfoData.userCharacter = page;
+                GameManager.GetInstance().userData.userCharacter = page;
 
                 BackendServerManager.GetInstance().SetData(GameMode.Character, (bool result) =>
                 {
@@ -52,7 +52,7 @@ public class ChangeCharacter : MonoBehaviour
         }
         else if(type == 3)
         {
-            page = BackendServerManager.GetInstance().UserInfoData.userCharacter;
+            page = GameManager.GetInstance().userData.userCharacter;
             SetCharacter(page);
             mainUI.SetActive(true);
             charUI.SetActive(false);            

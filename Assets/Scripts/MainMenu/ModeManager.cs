@@ -4,112 +4,158 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
-public static class AIMode
+public enum GameMode
 {
-    public static int[] Money = { 10, 20, 30, 40, 50 };
-    public static int currentAI;
+    Character,
+    Infinity,
+    Bounty,
+    Training,
+    Title,
+    MainMenu
 }
 
 public class ModeManager : MonoBehaviour
 {
     public GameObject mainUI;
 
-    [Header("vsAI")]
+    [Header("Bounty")]
     public GameObject originCharacter;
-    public GameObject aiCharacter;
-    public EnemyAI[] aiData;
-    public GameObject aiUI;
-    public Text aiMoneyText;
+    public Transform bountyAiCharacter;
+    public GameObject bountyModeUI;
+    public Text bountyText;
+    public EnemyAI[] bountyAiData;
 
-    GameObject[] aiCharacterList;   
+    private Button _bountyModeStartButton;
+    private GameObject[] _aiCharacterList;
 
     private void Awake()
     {
-        AIMode.currentAI = 0;
-        aiCharacterList = new GameObject[aiCharacter.transform.childCount];
-
-        for (int i = 0; i < aiCharacter.transform.childCount; i++)
-            aiCharacterList[i] = aiCharacter.transform.GetChild(i).gameObject;
+        BountyModeInit();
     }
 
-    // 무한, 현상금, 사격장
-    // ui 활성화
-    public void ActiveUI(int type)
+    // ui 활성화 및 비활성화
+    public void UIButtonEvent(string typeAndSwitch)
     {
-        if(type == 0)
-        {
+        int split = typeAndSwitch.IndexOf("|");
+        string _type = typeAndSwitch.Substring(0, split);
+        string _switch = typeAndSwitch.Substring(split);
 
-        }
-        else if(type == 1)
-        {
-            mainUI.SetActive(false);
-            originCharacter.SetActive(false);
-            aiUI.SetActive(true);
-            aiCharacter.SetActive(true);
-        }
-        else if(type == 3)
-        {
+        bool _flag = _switch == "on" ? true : false;
 
-        }      
+        if (_type == GameMode.Character.ToString()) UiManager(GameMode.Character, _flag);
+        else if (_type == GameMode.Infinity.ToString()) UiManager(GameMode.Infinity, _flag);
+        else if (_type == GameMode.Bounty.ToString()) UiManager(GameMode.Bounty, _flag);
+        else UiManager(GameMode.Training, _flag);
     }
 
-    public void PassiveUI(int type)
+    void UiManager(GameMode modeName, bool flag)
     {
-        if (type == 0)
+        switch (modeName)
         {
-
+            case GameMode.Character:
+                break;
+            case GameMode.Infinity:
+                break;
+            case GameMode.Bounty:
+                mainUI.SetActive(!flag);
+                originCharacter.SetActive(!flag);
+                bountyModeUI.SetActive(flag);
+                bountyAiCharacter.gameObject.SetActive(flag);
+                break;
+            case GameMode.Training:
+                break;
+            default:
+                break;
         }
-        else if (type == 1)
-        {
-            mainUI.SetActive(true);
-            originCharacter.SetActive(true);
-            aiUI.SetActive(false);
-            aiCharacter.SetActive(false);
-        }
-        else if (type == 3)
-        {
+    }
 
+    public void LoadScene(GameMode mode)
+    {
+        switch (mode)
+        {
+            case GameMode.Infinity:
+                SceneManager.LoadSceneAsync(GameMode.Infinity.ToString());
+                break;
+            case GameMode.Bounty:
+                SceneManager.LoadSceneAsync(GameMode.Bounty.ToString());
+                break;
+            case GameMode.Training:
+                SceneManager.LoadSceneAsync(GameMode.Training.ToString());
+                break;
+            case GameMode.Title:
+                SceneManager.LoadSceneAsync(GameMode.Title.ToString());
+                break;
+            case GameMode.MainMenu:
+                SceneManager.LoadSceneAsync(GameMode.MainMenu.ToString());
+                break;
+            default:
+                break;
         }
     }
 
     #region 현상금 모드
+    // 현상금 모드 초기화
+    void BountyModeInit(bool reset = false)
+    {
+        if (reset)
+        {
+            return;
+        }
+
+        GameManager.GetInstance().modeData.currentPlayAI = 0;
+
+        _aiCharacterList = new GameObject[bountyAiCharacter.childCount];
+
+        for (int i = 0; i < bountyAiData.Length; i++)
+        {
+            GameObject _object = Instantiate(bountyAiData[i].model, bountyAiCharacter);
+
+            _object.transform.localScale = bountyAiData[i].scale;
+            _object.SetActive(false);
+            _aiCharacterList[i] = _object;
+        }
+    }
     // 현상금 모드에서 AI 변경
     // 왼쪽 0 오른쪽 1
-    public void ChangeAI(int type)
+    public void ChangeAI(bool right)
     {
-        if(type == 0)
+        int currentPlayAI = GameManager.GetInstance().modeData.currentPlayAI;
+
+        _aiCharacterList[currentPlayAI].SetActive(false);
+
+        if (!right)
         {
-            if (AIMode.currentAI == 0)
-                AIMode.currentAI = aiCharacterList.Length - 1;
-            else AIMode.currentAI--;            
+            if (currentPlayAI == 0)
+                GameManager.GetInstance().modeData.currentPlayAI = _aiCharacterList.Length - 1;
+            else GameManager.GetInstance().modeData.currentPlayAI--;
         }
-        else if(type == 1)
+        else 
         {
-            if (AIMode.currentAI == aiCharacterList.Length - 1)
-                AIMode.currentAI = 0;
-            else AIMode.currentAI++;
+            if (currentPlayAI == _aiCharacterList.Length - 1)
+                GameManager.GetInstance().modeData.currentPlayAI = 0;
+            else GameManager.GetInstance().modeData.currentPlayAI++;
         }
-        else
-        {
-            AIMode.currentAI = BackendServerManager.GetInstance().UserInfoData.userClearAI;
+        //else
+        //{
+        //    AIMode.currentAI = GameManager.GetInstance().userData.userClearAI;
 
-            for (int i = 0; i < AIMode.currentAI; i++)
-                AIMode.Money[i] = -1;            
-        }
+        //    for (int i = 0; i < AIMode.currentAI; i++)
+        //        AIMode.Money[i] = -1;
+        //}
 
-        for (int i = 0; i < aiCharacterList.Length; i++)
-            aiCharacterList[i].SetActive(false);
+        var bountyMoney = bountyAiData[currentPlayAI].bountyMoney;
 
-        if (AIMode.Money[AIMode.currentAI] != -1) aiMoneyText.text = $"$ {aiData[AIMode.currentAI]}";
-        else aiMoneyText.text = "CLEAR";
+        if (bountyMoney != -1) bountyText.text = $"$ {bountyMoney}";
+        else bountyText.text = "CLEAR";
 
-        aiCharacterList[AIMode.currentAI].SetActive(true);
+        _aiCharacterList[currentPlayAI].SetActive(true);
     }
+    
 
-   public void StartAIMode()
+    public void StartAIMode()
     {
-        GameManager.GetInstance().currentAIStage = AIMode.currentAI;
-        SceneManager.LoadSceneAsync("vsAI");
+        GameManager.GetInstance().currentAIStage = GameManager.GetInstance().modeData.currentPlayAI;
+        LoadScene(GameMode.Bounty);
     }
     #endregion
 
@@ -117,6 +163,6 @@ public class ModeManager : MonoBehaviour
     // 로드 한 데이터를 기반으로 모든 모드를 초기화
     public void ReSetMode()
     {
-        ChangeAI(3);
+       // ChangeAI(3);
     }
 }

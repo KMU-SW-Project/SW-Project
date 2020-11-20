@@ -17,7 +17,7 @@ public class LoadData : MonoBehaviour
     {
         if (BackendServerManager.GetInstance().isConnected)
         {
-            nickname.text = BackendServerManager.GetInstance().UserInfoData.userNickname;
+            nickname.text = GameManager.GetInstance().userData.userNickname;
             modeManager.ReSetMode();
         }
         else nickname.text = "OFFLINE";

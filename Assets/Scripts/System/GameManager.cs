@@ -2,6 +2,24 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+
+public class UserData
+{
+    // 서버에 저장된 고유 테이블 번호
+    public string dataIndate;
+
+    // 유저 데이터
+    public string userNickname;
+    public int userCharacter;
+    public int userClearAI;
+}
+
+public class ModeData
+{
+    public int currentPlayAI;
+    public EnemyAI currentPlayAiData;
+}
+
 public class GameManager : MonoBehaviour
 {
     #region 싱글톤
@@ -26,9 +44,8 @@ public class GameManager : MonoBehaviour
         return instance;
     }
     #endregion
-   
-    public string handType;
+
+    public UserData userData = new UserData();
+    public ModeData modeData = new ModeData();
     public int currentAIStage;
-
-
 }

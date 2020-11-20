@@ -11,5 +11,5 @@ public class EnemyAI : ScriptableObject
     public int bountyMoney;
     public float fireTime;
     public GameObject model;
-
+    public Vector3 scale;
 }
