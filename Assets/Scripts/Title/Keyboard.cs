@@ -6,23 +6,23 @@ using UnityEngine.UI;
 public class Keyboard : MonoBehaviour
 {
     public InputField nickname;
-    public Login _Login;
+    public Login login;
 
     public List<Text> key;
-    bool isShift = true;
+    private bool _isShift = true;
 
     public void KeyShift()
     {
-        if (!isShift)
+        if (!_isShift)
         {
-            isShift = true;
+            _isShift = true;
 
             for (int i = 0; i < key.Count; i++)
-                key[i].text = key[i].text.ToUpper();            
+                key[i].text = key[i].text.ToUpper();
         }
         else
         {
-            isShift = false;
+            _isShift = false;
 
             for (int i = 0; i < key.Count; i++)
                 key[i].text = key[i].text.ToLower();
@@ -31,12 +31,12 @@ public class Keyboard : MonoBehaviour
 
     public void InputKey(string key)
     {
-        if (!isShift) nickname.text += key;
+        if (!_isShift) nickname.text += key;
         else nickname.text += key.ToUpper();
     }
 
     public void KeyBackspace() => nickname.text = nickname.text.Substring(0, nickname.text.Length - 1);
 
-    public void KeyEnter() => _Login.SetNickname();
+    public void KeyEnter() => login.SetNickname();
 
 }

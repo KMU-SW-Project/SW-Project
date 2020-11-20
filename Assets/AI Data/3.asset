@@ -18,3 +18,4 @@ MonoBehaviour:
   bountyMoney: 30
   fireTime: 0.6
   model: {fileID: 1214723647702548, guid: e85f10072d335224984d9b8ae2e93843, type: 3}
+  scale: {x: 1.7, y: 1.7, z: 1.7}

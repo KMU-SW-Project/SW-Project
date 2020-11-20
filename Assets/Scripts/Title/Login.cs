@@ -30,26 +30,28 @@ public class Login : MonoBehaviour
     public Text stateText;
 
     // 유저 계정 관련
-    string userID;
+     private string _userID;
 
     // 로그인 시도
     IEnumerator StartLogin()
     {
         while (true)
         {
+          
             yield return null;
+
             if (BackendServerManager.GetInstance().isConnected)
             {
                 // 아이디 생성 또는 재생성
                 CheckID((bool result, string id) =>
                 {
-                    if (result) userID = id;
+                    if (result) _userID = id;
                     else CreateID();
                 });        
                 stateText.text = DEBUG_SERVER_LOGING;
 
                 // 로그인 - 중복, 실패시 아이디 재생성 후 재시도
-                if (!BackendServerManager.GetInstance().ServerLogin(userID))
+                if (!BackendServerManager.GetInstance().ServerLogin(_userID))
                 {
                     print("로그인 실패");                  
                     continue;
@@ -85,7 +87,7 @@ public class Login : MonoBehaviour
 
         while (true)
         {
-            if (BackendServerManager.GetInstance().UserInfoData.userNickname != null)
+            if (GameManager.GetInstance().userData.userNickname != null)
             {
                 stateText.text = DEBUG_SERVER_WAITING;
                 yield return new WaitForSeconds(0.3f);
@@ -103,6 +105,7 @@ public class Login : MonoBehaviour
     // 로그인 버튼 누르면
     public void StartLoginBtn()
     {
+        TitleManager.instance.startButton.interactable = false;
         if (TitleManager.instance.uiOn) return;
         StartCoroutine(StartLogin());
     }
@@ -121,8 +124,7 @@ public class Login : MonoBehaviour
                 return;
             }
 
-            BackendServerManager.GetInstance().UserInfoData.userNickname = nicknameField.text;
-           // nextScene.SetActive(true);
+           GameManager.GetInstance().userData.userNickname = nicknameField.text;
         });
     }
 
@@ -146,7 +148,7 @@ public class Login : MonoBehaviour
         newID = GetRandomInfo();
 
         BackendServerManager.GetInstance().accountData.userID = newID;
-        userID = newID;
+        _userID = newID;
 
         return newID;
     }

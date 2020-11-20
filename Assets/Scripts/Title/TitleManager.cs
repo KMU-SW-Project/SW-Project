@@ -27,29 +27,31 @@ public class TitleManager : MonoBehaviour
     public Transform UI;
     public Text mainText;
     public bool uiOn = false;
-    GameObject optionUI;
-    GameObject selectHandUI;
-    GameObject nicknameUI;
-    GameObject keyboardUI;
-    GameObject errorUI;
-    Text errorText;
+    public Button startButton;
+
+    private GameObject _optionUI;
+    private GameObject _selectHandUI;
+    private GameObject _nicknameUI;
+    private GameObject _keyboardUI;
+    private GameObject _errorUI;
+    private Text _errorText;
 
     // 로컬 데이터 경로
-    string path;
+    private string _path;
 
     private void Awake()
     {
         instance = this;
 
-        path = Application.persistentDataPath + "/Handdata.txt";
+        _path = Application.persistentDataPath + "/Handdata.txt";
 
-        optionUI = UI.GetChild(0).gameObject;
-        selectHandUI = UI.GetChild(1).gameObject;
-        nicknameUI = UI.GetChild(2).gameObject;
-        keyboardUI = UI.GetChild(3).gameObject;
-        errorUI = UI.GetChild(4).gameObject;
+        _optionUI = UI.GetChild(0).gameObject;
+        _selectHandUI = UI.GetChild(1).gameObject;
+        _nicknameUI = UI.GetChild(2).gameObject;
+        _keyboardUI = UI.GetChild(3).gameObject;
+        _errorUI = UI.GetChild(4).gameObject;
 
-        errorText = errorUI.transform.GetChild(2).GetComponent<Text>();
+        _errorText = _errorUI.transform.GetChild(2).GetComponent<Text>();
 
         HandCheck();
     }
@@ -90,8 +92,8 @@ public class TitleManager : MonoBehaviour
     {
         try
         {
-            if (type == 0) BackendServerManager.GetInstance().accountData.handType = HandType.left.ToString();// File.WriteAllText(path, HandType.left.ToString());
-            else BackendServerManager.GetInstance().accountData.handType = HandType.right.ToString();// File.WriteAllText(path, HandType.right.ToString());
+            if (type == 0) BackendServerManager.GetInstance().accountData.handType = HandType.left.ToString();
+            else BackendServerManager.GetInstance().accountData.handType = HandType.right.ToString();
 
             BackendServerManager.GetInstance().CreateJsonFile();
 
@@ -114,17 +116,17 @@ public class TitleManager : MonoBehaviour
         switch (list)
         {
             case UIList.option:
-                optionUI.SetActive(true);
+                _optionUI.SetActive(true);
                 break;
             case UIList.selectHand:
-                selectHandUI.SetActive(true);
+                _selectHandUI.SetActive(true);
                 break;
             case UIList.nickname:
-                nicknameUI.SetActive(true);
-                keyboardUI.SetActive(true);
+                _nicknameUI.SetActive(true);
+                _keyboardUI.SetActive(true);
                 break;
             case UIList.error:
-                errorUI.SetActive(true);
+                _errorUI.SetActive(true);
                 break;
             default:
                 break;
@@ -139,17 +141,17 @@ public class TitleManager : MonoBehaviour
         switch (list)
         {
             case UIList.option:
-                optionUI.SetActive(false);
+                _optionUI.SetActive(false);
                 break;
             case UIList.selectHand:
-                selectHandUI.SetActive(false);
+                _selectHandUI.SetActive(false);
                 break;
             case UIList.nickname:
-                nicknameUI.SetActive(false);
-                keyboardUI.SetActive(false);
+                _nicknameUI.SetActive(false);
+                _keyboardUI.SetActive(false);
                 break;
             case UIList.error:
-                errorUI.SetActive(false);
+                _errorUI.SetActive(false);
                 break;
             default:
                 break;
@@ -162,7 +164,7 @@ public class TitleManager : MonoBehaviour
         switch (list)
         {
             case UIList.nickname:
-                Button button = nicknameUI.transform.GetChild(3).GetComponent<Button>();
+                Button button = _nicknameUI.transform.GetChild(3).GetComponent<Button>();
                 button.interactable = value;
                 break;
             default:
@@ -172,7 +174,7 @@ public class TitleManager : MonoBehaviour
 
     // 상태 메시지 혹은 에러 메시지 셋팅
     public void SetTitleLog(string text) => mainText.text = text;
-    public void SerErrorMessage(string error) => errorText.text = error;
+    public void SerErrorMessage(string error) => _errorText.text = error;
 
     // 옵션 활성화
     public void ActiveOption(int type)

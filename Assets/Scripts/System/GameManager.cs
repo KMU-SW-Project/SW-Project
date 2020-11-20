@@ -1,6 +1,24 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+
+[Serializable]
+public class UserData
+{
+    // 서버에 저장된 고유 테이블 번호
+    public string dataIndate;
+
+    // 유저 데이터
+    public string userNickname;
+    public int userCharacter;
+    public int userClearAI;
+}
+
+public class ModeData
+{
+    public EnemyAI currentPlayAiData;
+}
 
 public class GameManager : MonoBehaviour
 {
@@ -26,9 +44,7 @@ public class GameManager : MonoBehaviour
         return instance;
     }
     #endregion
-   
-    public string handType;
-    public int currentAIStage;
 
-
+    public UserData userData = new UserData();
+    public ModeData modeData = new ModeData();
 }
