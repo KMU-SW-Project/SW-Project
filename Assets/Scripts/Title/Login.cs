@@ -37,7 +37,9 @@ public class Login : MonoBehaviour
     {
         while (true)
         {
+          
             yield return null;
+
             if (BackendServerManager.GetInstance().isConnected)
             {
                 // 아이디 생성 또는 재생성
@@ -103,6 +105,7 @@ public class Login : MonoBehaviour
     // 로그인 버튼 누르면
     public void StartLoginBtn()
     {
+        TitleManager.instance.startButton.interactable = false;
         if (TitleManager.instance.uiOn) return;
         StartCoroutine(StartLogin());
     }

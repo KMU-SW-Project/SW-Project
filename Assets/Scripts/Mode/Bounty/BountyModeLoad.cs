@@ -9,6 +9,6 @@ public class BountyModeLoad : MonoBehaviour
 
     private void Start()
     {
-        Instantiate(ai[GameManager.GetInstance().modeData.currentPlayAI].model, spawnPos);
+        Instantiate(GameManager.GetInstance().modeData.currentPlayAiData.model, spawnPos);
     }
 }

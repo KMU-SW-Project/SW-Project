@@ -27,6 +27,7 @@ public class TitleManager : MonoBehaviour
     public Transform UI;
     public Text mainText;
     public bool uiOn = false;
+    public Button startButton;
 
     private GameObject _optionUI;
     private GameObject _selectHandUI;

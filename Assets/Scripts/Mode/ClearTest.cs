@@ -9,12 +9,11 @@ public class ClearTest : MonoBehaviour
 
     public void AIClear()
     {
-        BackendServerManager.GetInstance().SetData(GameMode.Bounty, GameManager.GetInstance().currentAIStage+1, (bool result) =>
+        BackendServerManager.GetInstance().SetData(GameMode.Bounty, GameManager.GetInstance().modeData.currentPlayAiData.enemyID, (bool result) =>
         {
             if (result)
             {
-               // AIMode.Money[GameManager.GetInstance().currentAIStage] = -1;
-                GameManager.GetInstance().userData.userClearAI = GameManager.GetInstance().currentAIStage + 1;
+                GameManager.GetInstance().modeData.currentPlayAiData.bountyMoney = -1;
                 nextScene.SetActive(true);
             }
             else print("저장 실패");

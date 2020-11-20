@@ -266,6 +266,7 @@ public partial class BackendServerManager : MonoBehaviour
 
             BackendReturnObject bro = Backend.GameSchemaInfo.Update(DATA_SERVER_TABLENAME, inDate, param);
 
+            print(bro.GetMessage());
             func(bro.IsSuccess());
         }
         catch (Exception e)

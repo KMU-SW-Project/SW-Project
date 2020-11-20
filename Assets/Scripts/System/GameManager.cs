@@ -1,8 +1,9 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-
+[Serializable]
 public class UserData
 {
     // 서버에 저장된 고유 테이블 번호
@@ -16,7 +17,6 @@ public class UserData
 
 public class ModeData
 {
-    public int currentPlayAI;
     public EnemyAI currentPlayAiData;
 }
 
@@ -47,5 +47,4 @@ public class GameManager : MonoBehaviour
 
     public UserData userData = new UserData();
     public ModeData modeData = new ModeData();
-    public int currentAIStage;
 }
