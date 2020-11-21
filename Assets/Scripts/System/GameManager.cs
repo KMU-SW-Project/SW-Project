@@ -18,6 +18,7 @@ public class UserData
 public class ModeData
 {
     public EnemyAI currentPlayAiData;
+    public int currentSelectedTarget;
 }
 
 public class GameManager : MonoBehaviour

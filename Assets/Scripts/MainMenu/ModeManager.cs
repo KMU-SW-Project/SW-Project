@@ -16,33 +16,35 @@ public enum GameMode
 
 public partial class ModeManager : MonoBehaviour
 {
-    [Header("UI")]
-    public Text nicknameText;
-    public GameObject mainUI;
-    public GameObject characterChangeUI;
-    public Button offlineCharacterButton;
+    [Header("Main")]
+    [SerializeField] private Text nicknameText;
+    [SerializeField] private GameObject mainUI;
+    [SerializeField] private GameObject characterChangeUI;
+    [SerializeField] private Button offlineCharacterButton;
+    private int _selectingCharacterIndex = 0;
+    private GameObject[] _character;
 
     [Header("Bounty")]
-    public GameObject originCharacter;
-    public Transform bountyAiCharacter;
-    public GameObject bountyModeUI;
-    public Text bountyText;
+    [SerializeField] private GameObject originCharacter;
+    [SerializeField] private Transform bountyAiCharacter;
+    [SerializeField] private GameObject bountyModeUI;
+    [SerializeField] private Text bountyText;
     public EnemyAI[] bountyAiData;
-
-    // 현상금 모드
     private int _seletingAIIndex;
     private Button _bountyModeStartButton;
     private GameObject[] _aiCharacterList;
 
-    // 캐릭터 변경
-    private int _selectingCharacterIndex = 0;
-    private GameObject[] _character;
+    [Header("Training")]
+    [SerializeField] private GameObject trainingModeUI;
+    [SerializeField] private GameObject[] targetList;
+    private bool _isSecondTarget;
 
     private void Awake()
     {
         SetOfflineMode();
         UserCharacterInit();
         BountyModeInit();
+      
     }
 
     void SetOfflineMode()
@@ -54,8 +56,8 @@ public partial class ModeManager : MonoBehaviour
         }
 
         nicknameText.text = "OFFLINE";
-        
-            offlineCharacterButton.interactable = false;
+
+        offlineCharacterButton.interactable = false;
     }
 
     // ui 활성화 및 비활성화
@@ -90,17 +92,20 @@ public partial class ModeManager : MonoBehaviour
             case GameMode.Bounty:
                 originCharacter.SetActive(!flag);
                 bountyModeUI.SetActive(flag);
-                bountyAiCharacter.gameObject.SetActive(flag);                
+                bountyAiCharacter.gameObject.SetActive(flag);
                 SetBountyAIModel(_seletingAIIndex);
                 break;
             case GameMode.Training:
+                originCharacter.SetActive(!flag);
+                trainingModeUI.SetActive(flag);
+                TrainingModeInit(flag);
                 break;
             default:
                 break;
         }
     }
 
-    public void LoadScene(GameMode mode)
+    private void LoadScene(GameMode mode)
     {
         switch (mode)
         {
@@ -166,7 +171,7 @@ public partial class ModeManager : MonoBehaviour
         var bountyMoney = bountyAiData[index].bountyMoney;
 
         bountyText.text = bountyMoney == -1 ? "CLEAR" : $"$ {bountyMoney}";
-        
+
         _aiCharacterList[index].SetActive(true);
     }
 
@@ -223,4 +228,36 @@ public partial class ModeManager : MonoBehaviour
     }
     #endregion
 
+    #region 사격장 모드
+
+    void TrainingModeInit(bool flag)
+    {
+        if (!flag)
+        {
+            for (int i = 0; i < targetList.Length; i++)
+                targetList[i].SetActive(false);
+
+            return;
+        }
+
+        _isSecondTarget = false;
+
+        targetList[0].SetActive(true);
+    }
+
+    public void ChangeTargetObject()
+    {
+        _isSecondTarget = !_isSecondTarget;
+
+        targetList[0].SetActive(!_isSecondTarget);
+        targetList[1].SetActive(_isSecondTarget);
+    }
+
+    public void StartTrainingMode()
+    {
+        GameManager.GetInstance().modeData.currentSelectedTarget = _isSecondTarget ? 1 : 0;
+        LoadScene(GameMode.Training);
+    }
+
+    #endregion
 }

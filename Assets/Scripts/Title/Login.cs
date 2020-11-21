@@ -84,10 +84,10 @@ public class Login : MonoBehaviour
                 break;
             }
         }
-
+        
         while (true)
         {
-            if (GameManager.GetInstance().userData.userNickname != null)
+            if (GameManager.GetInstance().userData.userNickname != string.Empty)
             {
                 stateText.text = DEBUG_SERVER_WAITING;
                 yield return new WaitForSeconds(0.3f);
