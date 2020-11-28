@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using Valve.VR;
 
 public enum GameMode
 {
@@ -11,11 +12,16 @@ public enum GameMode
     Bounty,
     Training,
     Title,
-    MainMenu
+    MainMenu,
+    VRTest
 }
 
 public partial class ModeManager : MonoBehaviour
 {
+    [Header("Secne Manage")]
+    [SerializeField] private SteamVR_LoadLevel nextScene;
+    [SerializeField] private GameObject player;
+
     [Header("Main")]
     [SerializeField] private Text nicknameText;
     [SerializeField] private GameObject mainUI;
@@ -23,6 +29,12 @@ public partial class ModeManager : MonoBehaviour
     [SerializeField] private Button offlineCharacterButton;
     private int _selectingCharacterIndex = 0;
     private GameObject[] _character;
+
+    [Header("Infinity")]    
+    [SerializeField] private GameObject infinityUI;
+    [SerializeField] private Transform[] rankList;
+    [SerializeField] private Transform rankBoard;
+    [SerializeField] private Text bestScoreText;
 
     [Header("Bounty")]
     [SerializeField] private GameObject originCharacter;
@@ -41,10 +53,14 @@ public partial class ModeManager : MonoBehaviour
 
     private void Awake()
     {
+        if (GameManager.GetInstance().playMode == GameMode.VRTest) player.SetActive(false);
+
+        GameManager.GetInstance().SetPlayerCameraPosition(player.transform);
+
         SetOfflineMode();
         UserCharacterInit();
         BountyModeInit();
-      
+        InfinityModeInit();
     }
 
     void SetOfflineMode()
@@ -55,7 +71,12 @@ public partial class ModeManager : MonoBehaviour
             return;
         }
 
+        // 닉네임
         nicknameText.text = "OFFLINE";
+
+        // 랭킹
+        rankBoard.GetChild(2).gameObject.SetActive(true);
+        rankBoard.GetChild(3).gameObject.SetActive(false);
 
         offlineCharacterButton.interactable = false;
     }
@@ -88,6 +109,9 @@ public partial class ModeManager : MonoBehaviour
                 SetCharacter(_selectingCharacterIndex);
                 break;
             case GameMode.Infinity:
+                infinityUI.SetActive(flag);
+                originCharacter.SetActive(!flag);
+                SetRankBoard();
                 break;
             case GameMode.Bounty:
                 originCharacter.SetActive(!flag);
@@ -110,24 +134,61 @@ public partial class ModeManager : MonoBehaviour
         switch (mode)
         {
             case GameMode.Infinity:
-                SceneManager.LoadSceneAsync(GameMode.Infinity.ToString());
+                nextScene.levelName = GameMode.Infinity.ToString();
                 break;
             case GameMode.Bounty:
-                SceneManager.LoadSceneAsync(GameMode.Bounty.ToString());
+                nextScene.levelName = GameMode.Bounty.ToString();
                 break;
             case GameMode.Training:
-                SceneManager.LoadSceneAsync(GameMode.Training.ToString());
+                nextScene.levelName = GameMode.Training.ToString();
                 break;
             case GameMode.Title:
-                SceneManager.LoadSceneAsync(GameMode.Title.ToString());
+                nextScene.levelName = GameMode.Title.ToString();
                 break;
             case GameMode.MainMenu:
-                SceneManager.LoadSceneAsync(GameMode.MainMenu.ToString());
+                nextScene.levelName = GameMode.MainMenu.ToString();
                 break;
             default:
                 break;
         }
+
+        nextScene.gameObject.SetActive(true);
     }
+
+    #region 무한 모드
+    
+    void InfinityModeInit()
+    {
+        for (int i = 0; i < rankList.Length; i++)
+            rankList[i].gameObject.SetActive(false);
+
+        bestScoreText.text = $"<color=#FFC5E7>{GameManager.GetInstance().userData.userInfinityScore}</color>승";
+    }
+
+    public void StartInfinityMode()
+    {
+        LoadScene(GameMode.Infinity);
+    }
+
+    void SetRankBoard()
+    {
+        BackendServerManager.GetInstance().GetRankingBoard((string[] data) =>
+        {
+            for (int i = 0; i < data.Length; i++)
+            {
+                string[] userRankData = data[i].Split('|');
+
+                rankList[i].GetChild(0).GetComponent<Text>().text = userRankData[0];
+                rankList[i].GetChild(1).GetComponent<Text>().text = userRankData[1];
+                rankList[i].GetChild(2).GetComponent<Text>().text = userRankData[2];
+
+                rankList[i].gameObject.SetActive(true);
+            }
+        });
+    
+    }
+
+    #endregion
 
     #region 현상금 모드
     // 현상금 모드 초기화
