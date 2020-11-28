@@ -3,6 +3,7 @@ using BackEnd;
 using LitJson;
 using System;
 using System.IO;
+using System.Text;
 
 [Serializable]
 public class AccountData
@@ -55,7 +56,7 @@ public partial class BackendServerManager : MonoBehaviour
     const string DATA_SERVER_SCHEMANAME_INFINITY = "infinity";
     const string DATA_SERVER_PLEYER_NICKNAME = "nickname";
     #endregion
-    
+
     public bool isConnected = false;
     private string _path;
     public AccountData accountData = new AccountData();
@@ -204,6 +205,7 @@ public partial class BackendServerManager : MonoBehaviour
             {
                 JsonData data = bro.GetReturnValuetoJSON()[DATA_SERVER_JSONROWS][0];
                 gameManager.userData.userClearAI = int.Parse(data[DATA_SERVER_SCHEMANAME_AI]["N"].ToString());
+                gameManager.userData.userInfinityScore = int.Parse(data[DATA_SERVER_SCHEMANAME_INFINITY]["N"].ToString());
                 return true;
             }
             else return false;
@@ -223,13 +225,15 @@ public partial class BackendServerManager : MonoBehaviour
             Param data = new Param();
             data.Add(DATA_SERVER_SCHEMANAME_CHARACTER, 0);
             data.Add(DATA_SERVER_SCHEMANAME_AI, 0);
+            data.Add(DATA_SERVER_SCHEMANAME_INFINITY, 0);
 
             BackendReturnObject bro = Backend.GameSchemaInfo.Insert(DATA_SERVER_TABLENAME, data);
 
             if (bro.IsSuccess())
             {
-                 gameManager.userData.userCharacter = 0;
-                 gameManager.userData.userClearAI = 0;
+                gameManager.userData.userCharacter = 0;
+                gameManager.userData.userClearAI = 0;
+                gameManager.userData.userInfinityScore = 0;
                 gameManager.userData.dataIndate = bro.GetInDate();
                 return true;
             }
@@ -293,6 +297,48 @@ public partial class BackendServerManager : MonoBehaviour
         {
             print($"데이터 수정 부분 : {e}");
         }
+    }
+
+    // 랭킹 가져오기
+    public void GetRankingBoard(Action<string[]> sendData)
+    {
+        StringBuilder userRankData = new StringBuilder();
+        string[] data;
+
+        BackendReturnObject bro = Backend.RTRank.RTRankList();
+
+        gameManager.userData.rankingUuid = bro.Rows()[0]["uuid"]["S"].ToString();
+
+        Backend.RTRank.GetRTRankByUuid(gameManager.userData.rankingUuid, (callback) =>
+        {
+            JsonData jsonData = callback.GetReturnValuetoJSON();
+
+            int totalCount = int.Parse(callback.GetReturnValuetoJSON()["totalCount"].ToString());
+            data = new string[totalCount];
+
+            for (int i = 0; i < totalCount; i++)
+            {
+                userRankData.Append(jsonData[DATA_SERVER_JSONROWS][i]["rank"]["N"]);
+                userRankData.Append("|");
+                userRankData.Append(jsonData[DATA_SERVER_JSONROWS][i]["nickname"]);
+                userRankData.Append("|");
+                userRankData.Append(jsonData[DATA_SERVER_JSONROWS][i]["score"]["N"]);
+
+                data[i] = userRankData.ToString();
+                userRankData.Clear();
+            }
+
+            sendData(data);
+        });
+    }
+
+    // 랭킹 등록하기
+    public void SetRankingScore(int score, Action<bool> func)
+    {
+        Backend.GameInfo.UpdateRTRankTable(DATA_SERVER_TABLENAME, DATA_SERVER_SCHEMANAME_INFINITY, gameManager.userData.dataIndate, score, (callback) =>
+        {
+            func(callback.IsSuccess());
+        });
     }
     #endregion
 

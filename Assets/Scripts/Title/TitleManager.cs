@@ -13,12 +13,6 @@ public enum UIList
     error,
 }
 
-public enum HandType
-{
-    left,
-    right,
-}
-
 public class TitleManager : MonoBehaviour
 {
     public static TitleManager instance;
@@ -61,13 +55,13 @@ public class TitleManager : MonoBehaviour
     {
         if (BackendServerManager.GetInstance().CheckFile())
         {
-            BackendServerManager.GetInstance().LoadJsonFile();
+            if (BackendServerManager.GetInstance().LoadJsonFile())
+            {
+                var userHandType = BackendServerManager.GetInstance().accountData.handType;
 
-            // 추후 작업 예정
-            // 왼손 오른손 선택한 쪽에 총을 쥐어줌
-            //if (handType == "left") HandType.instance.SetHandType(Valve.VR.SteamVR_Input_Sources.LeftHand);
-            //else if (handType == "right") HandType.instance.SetHandType(Valve.VR.SteamVR_Input_Sources.RightHand);
-            //else ActiveOnUI("SelectHand");            
+                if (userHandType == HandType.left.ToString()) GameManager.GetInstance().SetUserControllerModel(HandType.left);
+                else GameManager.GetInstance().SetUserControllerModel(HandType.right);
+            }
         }
         else
         {
@@ -98,6 +92,8 @@ public class TitleManager : MonoBehaviour
             BackendServerManager.GetInstance().CreateJsonFile();
 
             PassiveUI(UIList.selectHand);
+
+            HandCheck();
         }
         catch (System.Exception e)
         {
