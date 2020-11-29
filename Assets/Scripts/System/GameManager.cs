@@ -40,12 +40,14 @@ public class GameManager : MonoBehaviour
         if (instance != null)
         {
             Destroy(instance);
-            Destroy(player);
+           Destroy(player);
         }
-
+        player = GameObject.Find("Player");
         instance = this;
+
         DontDestroyOnLoad(gameObject);
         DontDestroyOnLoad(player);
+        player.name = "donPlayer";
     }
 
     public static GameManager GetInstance()
