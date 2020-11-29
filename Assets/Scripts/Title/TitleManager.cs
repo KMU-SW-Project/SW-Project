@@ -35,6 +35,10 @@ public class TitleManager : MonoBehaviour
 
     private void Awake()
     {
+        var beforePlayer = GameObject.Find("donPlayer");
+
+        if (beforePlayer != null) Destroy(beforePlayer);
+
         instance = this;
 
         _path = Application.persistentDataPath + "/Handdata.txt";
@@ -45,8 +49,11 @@ public class TitleManager : MonoBehaviour
         _keyboardUI = UI.GetChild(3).gameObject;
         _errorUI = UI.GetChild(4).gameObject;
 
-        _errorText = _errorUI.transform.GetChild(2).GetComponent<Text>();
+        _errorText = _errorUI.transform.GetChild(2).GetComponent<Text>();       
+    }
 
+    private void Start()
+    {
         HandCheck();
     }
 

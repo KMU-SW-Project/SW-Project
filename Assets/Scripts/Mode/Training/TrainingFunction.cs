@@ -12,6 +12,7 @@ public enum TrainingMode
 
 public class TrainingFunction : MonoBehaviour
 {
+    public GameObject player;
     public Transform[] randomPos;
     [HideInInspector] public TrainingMode currentMode;
     [SerializeField] private Transform _targetParent;
@@ -19,7 +20,13 @@ public class TrainingFunction : MonoBehaviour
     private bool _isMute;
     private int _targetType;
     private Target _target;
-   
+
+    private void Awake()
+    {
+        if (GameManager.GetInstance().playMode == GameMode.VRTest) player.SetActive(false);
+
+        GameManager.GetInstance().SetPlayerCameraPosition(player.transform);
+    }
 
     private void Start()
     {
