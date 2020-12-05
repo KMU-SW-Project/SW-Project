@@ -23,6 +23,7 @@ namespace Valve.VR.Extras
         public event PointerEventHandler PointerIn;
         public event PointerEventHandler PointerOut;
         public event PointerEventHandler PointerClick;
+        public Vector3 hitPoint;
 
         Transform previousContact = null;
 
@@ -46,9 +47,10 @@ namespace Valve.VR.Extras
             pointer = GameObject.CreatePrimitive(PrimitiveType.Cube);
             pointer.transform.parent = holder.transform;
             pointer.transform.localScale = new Vector3(thickness, thickness, 100f);
-            pointer.transform.localPosition = new Vector3(0f, 0f, 50f);
+            pointer.transform.localPosition = new Vector3(0f, 0.075f, 50f);
             pointer.transform.localRotation = Quaternion.identity;
             BoxCollider collider = pointer.GetComponent<BoxCollider>();
+
             if (addRigidBody)
             {
                 if (collider)
@@ -102,6 +104,7 @@ namespace Valve.VR.Extras
             Ray raycast = new Ray(transform.position, transform.forward);
             RaycastHit hit;
             bool bHit = Physics.Raycast(raycast, out hit);
+            hitPoint = hit.point;
 
             if (previousContact && previousContact != hit.transform)
             {
@@ -146,13 +149,16 @@ namespace Valve.VR.Extras
             {
                 pointer.transform.localScale = new Vector3(thickness * 5f, thickness * 5f, dist);
                 pointer.GetComponent<MeshRenderer>().material.color = clickColor;
+               
+               
             }
             else
             {
                 pointer.transform.localScale = new Vector3(thickness, thickness, dist);
                 pointer.GetComponent<MeshRenderer>().material.color = color;
             }
-            pointer.transform.localPosition = new Vector3(0f, 0f, dist / 2f);
+            pointer.transform.localPosition = new Vector3(0f, 0.075f, (dist / 2f) +0.3f);
+
         }
     }
 

@@ -1972,6 +1972,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4670764120559952}
   - component: {fileID: 95217205003396926}
+  - component: {fileID: 6195072731630104945}
   m_Layer: 0
   m_Name: Character_Cowboy_01
   m_TagString: Untagged
@@ -2021,6 +2022,19 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
+--- !u!65 &6195072731630104945
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1800371080893130}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 0.6623234, y: 1.8199072, z: 0.4163335}
+  m_Center: {x: -0.003709644, y: 0.9720571, z: -0.0028758943}
 --- !u!1 &1842809463861744
 GameObject:
   m_ObjectHideFlags: 0

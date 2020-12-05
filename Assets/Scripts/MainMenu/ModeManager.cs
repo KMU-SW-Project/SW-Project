@@ -131,6 +131,8 @@ public partial class ModeManager : MonoBehaviour
 
     private void LoadScene(GameMode mode)
     {
+        GameManager.GetInstance().modeData.currentPlayMode = mode;
+
         switch (mode)
         {
             case GameMode.Infinity:

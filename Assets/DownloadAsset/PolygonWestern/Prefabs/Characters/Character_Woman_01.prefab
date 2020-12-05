@@ -2289,6 +2289,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4143052088534468}
   - component: {fileID: 95632277690515818}
+  - component: {fileID: 3605831550834305625}
   m_Layer: 0
   m_Name: Character_Woman_01
   m_TagString: Untagged
@@ -2338,6 +2339,19 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
+--- !u!65 &3605831550834305625
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1876497922086962}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 0.7187821, y: 1.8015862, z: 0.41635597}
+  m_Center: {x: 0.00092193484, y: 0.93001604, z: -0.023893416}
 --- !u!1 &1888534244931852
 GameObject:
   m_ObjectHideFlags: 0

@@ -5,6 +5,7 @@
 //=============================================================================
 
 using UnityEngine;
+using UnityEngine.UI;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -42,7 +43,12 @@ namespace Valve.VR.InteractionSystem
 
 		public bool allowToggleTo2D = true;
 
-
+		private Queue<ParticleSystem> _shotEffectPool;
+		private Queue<GameObject> _shotBulletMarkPool;
+		[SerializeField] private GameObject _bulletMarkPrefab;
+		[SerializeField] private Transform _weaponParent;
+		[SerializeField] private ParticleSystem _effectPrefab;
+		[SerializeField] private Text headsetState;
 		//-------------------------------------------------
 		// Singleton instance of the Player. Only one can exist at a time.
 		//-------------------------------------------------
@@ -248,15 +254,56 @@ namespace Valve.VR.InteractionSystem
 			}
 		}
 
+		private void CreatePool()
+        {
+            for (int i = 0; i < 20; i++)
+            {
+				var effect = Instantiate(_effectPrefab, _weaponParent.GetChild(0));
+				var mark = Instantiate(_bulletMarkPrefab, _weaponParent.GetChild(1));
 
-		//-------------------------------------------------
-		private void Awake()
+				effect.gameObject.SetActive(false);
+				_shotEffectPool.Enqueue(effect);
+
+				mark.SetActive(false);
+				_shotBulletMarkPool.Enqueue(mark);
+			}
+        }
+
+		public ParticleSystem GetEffect()
+        {
+			var effect = _shotEffectPool.Dequeue();
+			effect.gameObject.SetActive(true);
+			return effect;
+        }
+
+		public GameObject GetMark()
+        {
+			var mark = _shotBulletMarkPool.Dequeue();
+			mark.SetActive(true);
+
+			return mark;
+        }
+
+		public void ReturnEffect(ParticleSystem obj)
+        {
+			_shotEffectPool.Enqueue(obj);
+        }
+
+		public void ReturnMark(GameObject obj)
+        {
+			obj.SetActive(false);
+			_shotBulletMarkPool.Enqueue(obj);
+        }
+
+
+        //-------------------------------------------------
+        private void Awake()
 		{
 			if ( trackingOriginTransform == null )
 			{
 				trackingOriginTransform = this.transform;
 			}
-
+			
 #if OPENVR_XR_API && UNITY_LEGACY_INPUT_HELPERS
 			if (hmdTransforms != null)
 			{
@@ -275,7 +322,11 @@ namespace Valve.VR.InteractionSystem
 		{
 			_instance = this;
 
-            while (SteamVR.initializedState == SteamVR.InitializedStates.None || SteamVR.initializedState == SteamVR.InitializedStates.Initializing)
+			_shotEffectPool = new Queue<ParticleSystem>();
+			_shotBulletMarkPool = new Queue<GameObject>();
+			CreatePool();
+
+			while (SteamVR.initializedState == SteamVR.InitializedStates.None || SteamVR.initializedState == SteamVR.InitializedStates.Initializing)
                 yield return null;
 
 			if ( SteamVR.instance != null )
@@ -299,11 +350,13 @@ namespace Valve.VR.InteractionSystem
             {
                 if (headsetOnHead.GetStateDown(SteamVR_Input_Sources.Head))
                 {
+					headsetState.text = "헤드셋 착용";
                     Debug.Log("<b>SteamVR Interaction System</b> Headset placed on head");
                 }
                 else if (headsetOnHead.GetStateUp(SteamVR_Input_Sources.Head))
                 {
-                    Debug.Log("<b>SteamVR Interaction System</b> Headset removed");
+					headsetState.text = "<Color=red>헤드셋 미착용</Color>";
+					Debug.Log("<b>SteamVR Interaction System</b> Headset removed");
                 }
             }
         }
