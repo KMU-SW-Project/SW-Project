@@ -1503,6 +1503,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4535344246604004}
   - component: {fileID: 95511887735396104}
+  - component: {fileID: 8929830391537144395}
   m_Layer: 0
   m_Name: Character_Cowgirl_01
   m_TagString: Untagged
@@ -1552,6 +1553,19 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
+--- !u!65 &8929830391537144395
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1506550050545096}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 0.7223717, y: 1.7535255, z: 0.38244706}
+  m_Center: {x: -0.009536147, y: 0.9673928, z: -0.029080182}
 --- !u!1 &1517154364432892
 GameObject:
   m_ObjectHideFlags: 0

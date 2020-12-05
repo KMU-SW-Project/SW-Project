@@ -21,4 +21,9 @@ public class Target : MonoBehaviour
             transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.Euler(new Vector3(90, 0, 0)), Time.deltaTime * weight);
         }
     }
+
+    public void HitTarget()
+    {
+        active = false;
+    }
 }

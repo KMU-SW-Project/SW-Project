@@ -25,6 +25,7 @@ public class UserData
 
 public class ModeData
 {
+    public GameMode currentPlayMode;
     public EnemyAI currentPlayAiData;
     public int currentSelectedTarget;
 }

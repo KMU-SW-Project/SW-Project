@@ -21,6 +21,8 @@ public class TrainingFunction : MonoBehaviour
     private int _targetType;
     private Target _target;
 
+    IEnumerator co_RandomPos;
+
     private void Awake()
     {
         if (GameManager.GetInstance().playMode == GameMode.VRTest) player.SetActive(false);
@@ -40,6 +42,9 @@ public class TrainingFunction : MonoBehaviour
     {
         ModeReset();
 
+        if (co_RandomPos != null)
+            StopCoroutine(co_RandomPos);
+
         _target = _targetParent.GetChild(_targetType).GetComponent<Target>();
 
         if (mode == TrainingMode.FixedPos.ToString())
@@ -50,7 +55,8 @@ public class TrainingFunction : MonoBehaviour
         }
         else if (mode == TrainingMode.RandomPos.ToString()) currentMode = TrainingMode.RandomPos;
       
-        StartCoroutine(DelayStart());
+       co_RandomPos = DelayStart();
+        StartCoroutine(co_RandomPos);
     }
 
     // 랜덤으로 타겟의 위치를 바꿔줌
