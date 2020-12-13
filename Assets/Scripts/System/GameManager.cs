@@ -34,6 +34,7 @@ public class GameManager : MonoBehaviour
 {
     #region 싱글톤
     private static GameManager instance;
+
     public GameObject player;
 
     private void Awake()
@@ -69,7 +70,9 @@ public class GameManager : MonoBehaviour
     // 0,1 = left gun-hand , 2,3 = right gun-hand
     public GameObject[] handModel;
     public GameMode playMode;
+    public bool gunGuide;
 
+    
     public void SetUserControllerModel(HandType handtype)
     {
         for (int i = 0; i < handModel.Length; i++)
