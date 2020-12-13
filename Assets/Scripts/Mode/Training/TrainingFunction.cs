@@ -34,6 +34,7 @@ public class TrainingFunction : MonoBehaviour
     private void Start()
     {
         _targetType = GameManager.GetInstance().modeData.currentSelectedTarget;
+        GameManager.GetInstance().SetBGM(GameMode.Training);
     }
 
     // 모드 변경에 대한 버튼 함수

@@ -32,11 +32,10 @@ public class ModeData
     public int currentSelectedTarget;
 }
 
-public static class SoundValue
+public static class Sound
 {
-    public static AudioMixer audioMixer;
-    private static int bGM;
-    private static int sFX;
+    private static int bGM = 8;
+    private static int sFX = 8;
 
     public static int BGM
     {
@@ -84,12 +83,10 @@ public class GameManager : MonoBehaviour
         DontDestroyOnLoad(player);
         player.name = "donPlayer";
 
-        if (audioMixer != null)
+        if(userData.dataIndate != string.Empty)
         {
-            SoundValue.audioMixer = audioMixer;
-            SoundValue.BGM = SoundValue.SFX = 8;
+            Sound.BGM = Sound.SFX = 8;
         }
-
     }
 
     public static GameManager GetInstance()
@@ -112,6 +109,7 @@ public class GameManager : MonoBehaviour
     public GameMode playMode;
     public bool gunGuide;
     public AudioMixer audioMixer;
+    public AudioClip[] audioArray;
 
     public void SetUserControllerModel(HandType handtype)
     {
@@ -148,16 +146,42 @@ public class GameManager : MonoBehaviour
 
         if (type == "BGM")
         {
-            if (flag == "Up") SoundValue.BGM++;
-            else SoundValue.BGM--;
+            if (flag == "Up") Sound.BGM++;
+            else Sound.BGM--;
 
-            SoundValue.audioMixer.SetFloat("BGM", (SoundValue.BGM*10) - 80);
+          audioMixer.SetFloat("BGM", (Sound.BGM*10) - 80);
             return;
         }
 
-        if (flag == "Up") SoundValue.SFX++;
-        else SoundValue.SFX--;
+        if (flag == "Up") Sound.SFX++;
+        else Sound.SFX--;
 
-        SoundValue.audioMixer.SetFloat("SFX", (SoundValue.SFX*10) - 80);
+        audioMixer.SetFloat("SFX", (Sound.SFX*10) - 80);
+    }
+    
+    public void SetBGM(GameMode mode)
+    {
+        var audioSource = player.GetComponent<AudioSource>();
+
+        switch (mode)
+        {
+            case GameMode.Infinity:
+                audioSource.clip = audioArray[0];                
+                break;
+            case GameMode.Bounty:
+                audioSource.clip = audioArray[1];
+                break;
+            case GameMode.Training:
+                audioSource.clip = audioArray[2];
+                break;
+            case GameMode.Title:
+            case GameMode.MainMenu:
+                audioSource.clip = audioArray[3];
+                break;
+            default:
+                break;
+        }
+
+        audioSource.Play();
     }
 }
