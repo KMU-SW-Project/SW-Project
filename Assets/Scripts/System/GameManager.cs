@@ -107,7 +107,7 @@ public class GameManager : MonoBehaviour
     // 0,1 = left gun-hand , 2,3 = right gun-hand
     public GameObject[] handModel;
     public GameMode playMode;
-    public bool gunGuide;
+    public bool gunGuide, hitEnemy;
     public AudioMixer audioMixer;
     public AudioClip[] audioArray;
 
