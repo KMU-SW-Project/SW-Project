@@ -118,7 +118,8 @@ public class ClickEvent : MonoBehaviour
             && (GameManager.GetInstance().modeData.currentPlayMode == GameMode.Bounty
             || GameManager.GetInstance().modeData.currentPlayMode == GameMode.Infinity))
         {
-            Destroy(e.target.gameObject);
+            GameManager.GetInstance().hitEnemy = true;
+            //Destroy(e.target.gameObject);
         }
 
         // 각 버튼 이벤트 실행

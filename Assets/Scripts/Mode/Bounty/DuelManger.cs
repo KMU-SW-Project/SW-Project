@@ -87,6 +87,10 @@ public class DuelManger : MonoBehaviour
     public void DuelReadyCall()
     {
         StartCoroutine(DuelReady());
+
+        // 업데이트에서 true 되면 죽는 애니메이션 실행하는?게 어떨까
+        GameManager.GetInstance().hitEnemy = false;
+
         readyButton.SetActive(false);
     }
 
