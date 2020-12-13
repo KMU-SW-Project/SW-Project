@@ -22,6 +22,9 @@ public class TitleManager : MonoBehaviour
     public Text mainText;
     public bool uiOn = false;
     public Button startButton;
+    public Text bgmSoundText;
+    public Text sfxSoundText;
+    public Text guideText;
 
     private GameObject _optionUI;
     private GameObject _selectHandUI;
@@ -49,7 +52,8 @@ public class TitleManager : MonoBehaviour
         _keyboardUI = UI.GetChild(3).gameObject;
         _errorUI = UI.GetChild(4).gameObject;
 
-        _errorText = _errorUI.transform.GetChild(2).GetComponent<Text>();       
+        _errorText = _errorUI.transform.GetChild(2).GetComponent<Text>();
+
     }
 
     private void Start()
@@ -75,9 +79,7 @@ public class TitleManager : MonoBehaviour
             ActiveUI(UIList.selectHand);
         }
     }
-
-
-
+    
     public void ExitGame()
     {
         if (uiOn) return;
@@ -186,8 +188,31 @@ public class TitleManager : MonoBehaviour
         else PassiveUI(UIList.option);
     }
 
+    public void SetSoundValueText(int bgm, int sfx)
+    {
+        bgmSoundText.text = bgm.ToString();
+        sfxSoundText.text = sfx.ToString();
+    }
+
+    public void SetGunGuide()
+    {
+        var guide = GameManager.GetInstance().gunGuide;
+        guide = !guide;
+
+        GameManager.GetInstance().gunGuide = guide;
+
+        if (guide)
+        {
+            guideText.text = "조준선 : <color=yellow>켜짐</color>";
+            return;
+        }
+        guideText.text = "조준선 : 꺼짐";
+    }
+
     // 데이터 폴더 오픈
     [ContextMenu("Show in Explorer")]
     void ShowExplorer() => System.Diagnostics.Process.Start(Application.persistentDataPath);
+
+
     #endregion
 }

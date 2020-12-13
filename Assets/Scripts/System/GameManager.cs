@@ -2,6 +2,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
+using UnityEngine.Audio;
 
 public enum HandType
 {
@@ -30,6 +32,37 @@ public class ModeData
     public int currentSelectedTarget;
 }
 
+public static class SoundValue
+{
+    public static AudioMixer audioMixer;
+    private static int bGM;
+    private static int sFX;
+
+    public static int BGM
+    {
+        get => bGM;
+        set
+        {
+            if (value > 8 || value < 0) return;
+
+            bGM = value;
+            TitleManager.instance.SetSoundValueText(BGM, SFX);
+        }
+    }
+    public static int SFX
+    {
+        get => sFX;
+        set
+        {
+            if (value > 8 || value < 0) return;
+
+            sFX = value;
+            TitleManager.instance.SetSoundValueText(BGM, SFX);
+        }
+    }
+}
+
+
 public class GameManager : MonoBehaviour
 {
     #region 싱글톤
@@ -42,7 +75,7 @@ public class GameManager : MonoBehaviour
         if (instance != null)
         {
             Destroy(instance);
-           Destroy(player);
+            Destroy(player);
         }
         player = GameObject.Find("Player");
         instance = this;
@@ -50,11 +83,18 @@ public class GameManager : MonoBehaviour
         DontDestroyOnLoad(gameObject);
         DontDestroyOnLoad(player);
         player.name = "donPlayer";
+
+        if (audioMixer != null)
+        {
+            SoundValue.audioMixer = audioMixer;
+            SoundValue.BGM = SoundValue.SFX = 8;
+        }
+
     }
 
     public static GameManager GetInstance()
     {
-        if(instance == null)
+        if (instance == null)
         {
             print("GameManager 인스턴스 없음");
             return null;
@@ -71,12 +111,12 @@ public class GameManager : MonoBehaviour
     public GameObject[] handModel;
     public GameMode playMode;
     public bool gunGuide;
+    public AudioMixer audioMixer;
 
-    
     public void SetUserControllerModel(HandType handtype)
     {
         for (int i = 0; i < handModel.Length; i++)
-            handModel[i].SetActive(false);       
+            handModel[i].SetActive(false);
 
         switch (handtype)
         {
@@ -98,5 +138,26 @@ public class GameManager : MonoBehaviour
         player.transform.position = originPlayer.transform.position;
         player.transform.rotation = originPlayer.transform.rotation;
         player.transform.GetComponentInChildren<Camera>().transform.rotation = originPlayer.transform.rotation;
+    }
+
+    public void SetSoundValue(string typeValue)
+    {
+        int index = typeValue.IndexOf('|');
+        var type = typeValue.Substring(0, index);
+        var flag = typeValue.Substring(index + 1);
+
+        if (type == "BGM")
+        {
+            if (flag == "Up") SoundValue.BGM++;
+            else SoundValue.BGM--;
+
+            SoundValue.audioMixer.SetFloat("BGM", (SoundValue.BGM*10) - 80);
+            return;
+        }
+
+        if (flag == "Up") SoundValue.SFX++;
+        else SoundValue.SFX--;
+
+        SoundValue.audioMixer.SetFloat("SFX", (SoundValue.SFX*10) - 80);
     }
 }

@@ -76,7 +76,7 @@ namespace Valve.VR.Extras
             //Material newMaterial = new Material(Shader.Find("Unlit/Color"));
             //newMaterial.SetColor("_Color", color);
             //pointer.GetComponent<MeshRenderer>().material = newMaterial;
-            dot.transform.localScale = new Vector3(0.1f, 0.1f, 0.5f);
+            dot.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
         }
 
         public virtual void OnPointerIn(PointerEventArgs e)

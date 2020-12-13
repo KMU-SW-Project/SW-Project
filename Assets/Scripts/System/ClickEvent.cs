@@ -95,13 +95,13 @@ public class ClickEvent : MonoBehaviour
 
             Player.instance.ReturnMark(_tempeffect);
         }
-//Player.instance.GetMark().transform.position = laserPointer.hitPoint;
 
         Debug.Log("Trigger is down");
     }
 
     public void PointerClick(object sender, PointerEventArgs e)
     {
+        print(e.target.name);
         // 버튼이면 이미지 색 교체
         if (e.target.name.Contains(targetName.Button.ToString()))
         {

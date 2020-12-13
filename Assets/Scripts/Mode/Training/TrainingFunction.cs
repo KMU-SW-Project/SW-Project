@@ -124,10 +124,10 @@ public class TrainingFunction : MonoBehaviour
 
         if (guide)
         {
-            _soundText.text = "레이저 : <color=yellow>켜짐</color>";
+            _soundText.text = "조준선 : <color=yellow>켜짐</color>";
             return;
         }
-        _soundText.text = "레이저 : 꺼짐";
+        _soundText.text = "조준선 : 꺼짐";
     }
 
     // 메인메뉴로 가기
