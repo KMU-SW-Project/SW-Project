@@ -93,6 +93,7 @@ public class DuelManger : MonoBehaviour
     IEnumerator DuelReady()
     {
         //Ready신호음 출력
+        SFXManager.Instance.PlaySFX(vfx.Ready);
         //signal 출력
         currentState = duelstate.Ready;
         screenSignal.text = "Ready";
@@ -105,6 +106,7 @@ public class DuelManger : MonoBehaviour
     IEnumerator DuelStady()
     {
         //Stady 신호음
+        SFXManager.Instance.PlaySFX(vfx.Stady);
         //signa
         currentState = duelstate.Stady;
         screenSignal.text = "Stady";
@@ -118,13 +120,15 @@ public class DuelManger : MonoBehaviour
 
     IEnumerator DuelBang()
     {
-        Debug.Log("Bang");
-        screenSignal.text = "Bang!";
+        SFXManager.Instance.PlaySFX(vfx.Bang);
         currentState = duelstate.Bang;
+        screenSignal.text = "Bang!";
+        Debug.Log("Bang");
+        
         float enemyFiretime;
         enemyFiretime = currentEnemyAI.GetFireTime();
         Debug.Log("enemyFireTime  :" + enemyFiretime);
-        //플레이어가 쐈으면 playerwin 하고 return
+
         yield return new WaitForSeconds(enemyFiretime);
         Debug.Log("EnemyBang");
         //적 발사 anime
@@ -143,7 +147,19 @@ public class DuelManger : MonoBehaviour
         screenSignal.text = null;
         if(playerScore >= 3)
         {
+            if(currentGameMode == gamemode.Bounty)
+            {
+                BackendServerManager.GetInstance().SetData(GameMode.Bounty, GameManager.GetInstance().modeData.currentPlayAiData.enemyID, (bool result) =>
+                {
+                    if (result)
+                    {
+                        GameManager.GetInstance().modeData.currentPlayAiData.bountyMoney = -1;
+                    }
+                    else print("저장 실패");
+                });
+            }
             Debug.Log("Playerwin");
+            SFXManager.Instance.PlaySFX(vfx.Victory);
             titleButton.SetActive(true);
             resultText.gameObject.SetActive(true);
             resultText.text = "You Win !!!!";
@@ -152,6 +168,7 @@ public class DuelManger : MonoBehaviour
         else if(enemyScore >= 3)
         {
             Debug.Log("EnemyWin");
+            SFXManager.Instance.PlaySFX(vfx.Lose);
             titleButton.SetActive(true);
             resultText.gameObject.SetActive(true);
             resultText.text = "You Lose !!!!";
@@ -165,6 +182,7 @@ public class DuelManger : MonoBehaviour
 
     private void Playerwin()
     {
+        SFXManager.Instance.PlaySFX(vfx.Victory);
         StopAllCoroutines();
         playerScore++;
         //적 애니메이션?
@@ -173,6 +191,7 @@ public class DuelManger : MonoBehaviour
 
     private void Enemywin()
     {
+        SFXManager.Instance.PlaySFX(vfx.Lose);
         StopAllCoroutines();
         enemyScore++;
         //전광판 표시?
