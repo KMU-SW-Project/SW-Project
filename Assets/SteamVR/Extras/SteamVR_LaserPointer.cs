@@ -12,11 +12,12 @@ namespace Valve.VR.Extras
         public SteamVR_Action_Boolean interactWithUI = SteamVR_Input.GetBooleanAction("InteractUI");
 
         public bool active = true;
-        public Color color;
+        //public Color color;
         public float thickness = 0.002f;
-        public Color clickColor = Color.green;
+        //public Color clickColor = Color.green;
         public GameObject holder;
-        public GameObject pointer;
+        //public GameObject pointer;
+        public GameObject dot;
         bool isActive = false;
         public bool addRigidBody = false;
         public Transform reference;
@@ -24,7 +25,8 @@ namespace Valve.VR.Extras
         public event PointerEventHandler PointerOut;
         public event PointerEventHandler PointerClick;
         public Vector3 hitPoint;
-
+        public float dist = 100f;
+        public bool bHit;
         Transform previousContact = null;
 
 
@@ -44,12 +46,15 @@ namespace Valve.VR.Extras
             holder.transform.localPosition = Vector3.zero;
             holder.transform.localRotation = Quaternion.identity;
 
-            pointer = GameObject.CreatePrimitive(PrimitiveType.Cube);
-            pointer.transform.parent = holder.transform;
-            pointer.transform.localScale = new Vector3(thickness, thickness, 100f);
-            pointer.transform.localPosition = new Vector3(0f, 0.075f, 50f);
-            pointer.transform.localRotation = Quaternion.identity;
-            BoxCollider collider = pointer.GetComponent<BoxCollider>();
+            //pointer = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            dot = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+            //pointer.transform.parent = holder.transform;
+            dot.transform.parent = holder.transform;
+            //pointer.transform.localScale = new Vector3(thickness, thickness, 100f);
+            //pointer.transform.localPosition = new Vector3(0f, 0.075f, 50f);
+            //pointer.transform.localRotation = Quaternion.identity;
+            //BoxCollider collider = pointer.GetComponent<BoxCollider>();
+            SphereCollider collider = dot.GetComponent<SphereCollider>();
 
             if (addRigidBody)
             {
@@ -57,7 +62,7 @@ namespace Valve.VR.Extras
                 {
                     collider.isTrigger = true;
                 }
-                Rigidbody rigidBody = pointer.AddComponent<Rigidbody>();
+                Rigidbody rigidBody = dot.AddComponent<Rigidbody>();
                 rigidBody.isKinematic = true;
             }
             else
@@ -67,9 +72,11 @@ namespace Valve.VR.Extras
                     Object.Destroy(collider);
                 }
             }
-            Material newMaterial = new Material(Shader.Find("Unlit/Color"));
-            newMaterial.SetColor("_Color", color);
-            pointer.GetComponent<MeshRenderer>().material = newMaterial;
+
+            //Material newMaterial = new Material(Shader.Find("Unlit/Color"));
+            //newMaterial.SetColor("_Color", color);
+            //pointer.GetComponent<MeshRenderer>().material = newMaterial;
+            dot.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
         }
 
         public virtual void OnPointerIn(PointerEventArgs e)
@@ -99,11 +106,9 @@ namespace Valve.VR.Extras
                 this.transform.GetChild(0).gameObject.SetActive(true);
             }
 
-            float dist = 100f;
-
             Ray raycast = new Ray(transform.position, transform.forward);
             RaycastHit hit;
-            bool bHit = Physics.Raycast(raycast, out hit);
+            bHit = Physics.Raycast(raycast, out hit);
             hitPoint = hit.point;
 
             if (previousContact && previousContact != hit.transform)
@@ -129,10 +134,13 @@ namespace Valve.VR.Extras
             if (!bHit)
             {
                 previousContact = null;
+                dot.gameObject.SetActive(false);
             }
             if (bHit && hit.distance < 100f)
             {
                 dist = hit.distance;
+                dot.gameObject.SetActive(true);
+                dot.transform.position = hitPoint;
             }
 
             if (bHit && interactWithUI.GetStateUp(pose.inputSource))
@@ -147,20 +155,24 @@ namespace Valve.VR.Extras
 
             if (interactWithUI != null && interactWithUI.GetState(pose.inputSource))
             {
-                pointer.transform.localScale = new Vector3(thickness * 5f, thickness * 5f, dist);
-                pointer.GetComponent<MeshRenderer>().material.color = clickColor;
-               
-               
+                // 눌렀을때
+
+                //dot.transform.localScale = new Vector3(thickness * 5f, thickness * 5f, dist);
+                //pointer.GetComponent<MeshRenderer>().material.color = clickColor;
             }
             else
             {
-                pointer.transform.localScale = new Vector3(thickness, thickness, dist);
-                pointer.GetComponent<MeshRenderer>().material.color = color;
+                // 안 눌렀을때
+                
+                //pointer.transform.localScale = new Vector3(thickness, thickness, dist);
+                //pointer.GetComponent<MeshRenderer>().material.color = color;
             }
-            pointer.transform.localPosition = new Vector3(0f, 0.075f, (dist / 2f) +0.3f);
 
+            //pointer.transform.localPosition = new Vector3(0f, 0.075f, (dist / 2f) +0.3f);
         }
     }
+
+    
 
     public struct PointerEventArgs
     {

@@ -44,8 +44,8 @@ namespace Valve.VR.InteractionSystem
 		public bool allowToggleTo2D = true;
 
 		private Queue<ParticleSystem> _shotEffectPool;
-		private Queue<GameObject> _shotBulletMarkPool;
-		[SerializeField] private GameObject _bulletMarkPrefab;
+		private Queue<ParticleSystem> _markEffectPool;
+		[SerializeField] private ParticleSystem _markEffectPrefab;
 		[SerializeField] private Transform _weaponParent;
 		[SerializeField] private ParticleSystem _effectPrefab;
 		[SerializeField] private Text headsetState;
@@ -259,13 +259,13 @@ namespace Valve.VR.InteractionSystem
             for (int i = 0; i < 20; i++)
             {
 				var effect = Instantiate(_effectPrefab, _weaponParent.GetChild(0));
-				var mark = Instantiate(_bulletMarkPrefab, _weaponParent.GetChild(1));
+				var mark = Instantiate(_markEffectPrefab, _weaponParent.GetChild(1));
 
 				effect.gameObject.SetActive(false);
 				_shotEffectPool.Enqueue(effect);
 
-				mark.SetActive(false);
-				_shotBulletMarkPool.Enqueue(mark);
+				mark.gameObject.SetActive(false);
+				_markEffectPool.Enqueue(mark);
 			}
         }
 
@@ -276,10 +276,10 @@ namespace Valve.VR.InteractionSystem
 			return effect;
         }
 
-		public GameObject GetMark()
+		public ParticleSystem GetMark()
         {
-			var mark = _shotBulletMarkPool.Dequeue();
-			mark.SetActive(true);
+			var mark = _markEffectPool.Dequeue();
+			mark.gameObject.SetActive(true);
 
 			return mark;
         }
@@ -289,10 +289,9 @@ namespace Valve.VR.InteractionSystem
 			_shotEffectPool.Enqueue(obj);
         }
 
-		public void ReturnMark(GameObject obj)
+		public void ReturnMark(ParticleSystem obj)
         {
-			obj.SetActive(false);
-			_shotBulletMarkPool.Enqueue(obj);
+			_markEffectPool.Enqueue(obj);
         }
 
 
@@ -323,7 +322,7 @@ namespace Valve.VR.InteractionSystem
 			_instance = this;
 
 			_shotEffectPool = new Queue<ParticleSystem>();
-			_shotBulletMarkPool = new Queue<GameObject>();
+			_markEffectPool = new Queue<ParticleSystem>();
 			CreatePool();
 
 			while (SteamVR.initializedState == SteamVR.InitializedStates.None || SteamVR.initializedState == SteamVR.InitializedStates.Initializing)

@@ -29,7 +29,11 @@ AudioMixerController:
   m_SuspendThreshold: -80
   m_EnableSuspend: 1
   m_UpdateMode: 0
-  m_ExposedParameters: []
+  m_ExposedParameters:
+  - guid: bb9278477f2d0d54d918eeff8c23cf66
+    name: BGM
+  - guid: 4893b9d4377517640b5180574af54f7a
+    name: SFX
   m_AudioMixerGroupViews:
   - guids:
     - 7e710bcf758a30a4e80354c0119bd926
@@ -90,7 +94,7 @@ AudioMixerGroupController:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Effect
+  m_Name: SFX
   m_AudioMixer: {fileID: 24100000}
   m_GroupID: ed43a09e1e447f54d8fde077f46a5bbc
   m_Children: []

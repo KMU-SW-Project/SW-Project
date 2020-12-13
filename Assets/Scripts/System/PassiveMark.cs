@@ -13,6 +13,6 @@ public class PassiveMark : MonoBehaviour
     IEnumerator Passive()
     {
         yield return new WaitForSeconds(0.2f);
-        Player.instance.ReturnMark(gameObject);
+      //  Player.instance.ReturnMark(gameObject);
     }
 }

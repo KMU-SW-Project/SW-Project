@@ -17,7 +17,8 @@ public class TrainingFunction : MonoBehaviour
     [HideInInspector] public TrainingMode currentMode;
     [SerializeField] private Transform _targetParent;
     [SerializeField] private Text _soundText;
-    private bool _isMute;
+    [SerializeField] private GameObject nextScene;
+
     private int _targetType;
     private Target _target;
 
@@ -32,8 +33,6 @@ public class TrainingFunction : MonoBehaviour
 
     private void Start()
     {
-        _isMute = true;
-
         _targetType = GameManager.GetInstance().modeData.currentSelectedTarget;
     }
 
@@ -118,16 +117,19 @@ public class TrainingFunction : MonoBehaviour
     // 신호 소리 끄고 켜기
     public void SignSoundChange()
     {
-        _isMute = !_isMute;
+        var guide = GameManager.GetInstance().gunGuide;
+        guide = !guide;
 
-        if (!_isMute)
+        GameManager.GetInstance().gunGuide = guide;
+
+        if (guide)
         {
-            _soundText.text = "신호 소리 : <color=yellow>켜짐</color>";
+            _soundText.text = "조준선 : <color=yellow>켜짐</color>";
             return;
         }
-        _soundText.text = "신호 소리 : 꺼짐";
+        _soundText.text = "조준선 : 꺼짐";
     }
 
     // 메인메뉴로 가기
-    public void GoMainMenu() => SceneManager.LoadSceneAsync(GameMode.MainMenu.ToString());
+    public void GoMainMenu() => nextScene.SetActive(true);
 }
