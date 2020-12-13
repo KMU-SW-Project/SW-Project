@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7b721978fdb3f5642aedc51f75d66e07, type: 3}
   m_Name: 1
   m_EditorClassIdentifier: 
-  enemyName: 1
+  enemyName: Kim
   enemyID: 1
   diffculty: 1
   bountyMoney: 10
