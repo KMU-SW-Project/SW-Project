@@ -63,6 +63,11 @@ public partial class ModeManager : MonoBehaviour
         InfinityModeInit();
     }
 
+    private void Start()
+    {
+        GameManager.GetInstance().SetBGM(GameMode.MainMenu);
+    }
+
     void SetOfflineMode()
     {
         if (BackendServerManager.GetInstance().isConnected)
