@@ -350,11 +350,11 @@ namespace Valve.VR.InteractionSystem
                 if (headsetOnHead.GetStateDown(SteamVR_Input_Sources.Head))
                 {
 					headsetState.text = "헤드셋 착용";
-                    Debug.Log("<b>SteamVR Interaction System</b> Headset placed on head");
+					Debug.Log("<b>SteamVR Interaction System</b> Headset placed on head");
                 }
                 else if (headsetOnHead.GetStateUp(SteamVR_Input_Sources.Head))
                 {
-					headsetState.text = "<Color=red>헤드셋 미착용</Color>";
+					headsetState.text = "<Color=red>헤드셋 미착용</Color>";					
 					Debug.Log("<b>SteamVR Interaction System</b> Headset removed");
                 }
             }

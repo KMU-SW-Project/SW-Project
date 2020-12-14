@@ -1203,6 +1203,40 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 319084858}
   m_CullTransparentMesh: 0
+--- !u!21 &320308744
+Material:
+  serializedVersion: 6
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: Sprites/Default
+  m_Shader: {fileID: 10753, guid: 0000000000000000f000000000000000, type: 0}
+  m_ShaderKeywords: 
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - _AlphaTex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MainTex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Floats:
+    - PixelSnap: 0
+    - _EnableExternalAlpha: 0
+    m_Colors:
+    - _Color: {r: 1, g: 1, b: 1, a: 1}
+    - _Flip: {r: 1, g: 1, b: 1, a: 1}
+    - _RendererColor: {r: 1, g: 1, b: 1, a: 1}
 --- !u!1 &335578317
 GameObject:
   m_ObjectHideFlags: 0
@@ -1528,12 +1562,28 @@ MonoBehaviour:
   - {fileID: 1243421308}
   playMode: 6
   gunGuide: 0
+  hitEnemy: 0
+  isShot: 0
   audioMixer: {fileID: 24100000, guid: d6fd4c521b134764a81e701bcb993b6e, type: 2}
   audioArray:
   - {fileID: 8300000, guid: 27609f91516894548ad6c40a719503e4, type: 3}
   - {fileID: 8300000, guid: f267a806b0cf9b3438b1a0cf92302c04, type: 3}
   - {fileID: 8300000, guid: 54f333e9da1de9f48b2a363bd830344c, type: 3}
   - {fileID: 8300000, guid: 9900025218e30d643b40f675ee3c37ab, type: 3}
+--- !u!1 &411657275 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4539630632020843336, guid: 70bb93077b4311b42a96fc63581d311c,
+    type: 3}
+  m_PrefabInstance: {fileID: 4540630644941175433}
+  m_PrefabAsset: {fileID: 0}
+--- !u!81 &411657277
+AudioListener:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 411657275}
+  m_Enabled: 1
 --- !u!1 &438207350 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 7263674205059735302, guid: 7b10d3d102109ca40a827cf96e474af4,
@@ -1775,40 +1825,6 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 853.69, y: 180.8, z: 0}
   m_Center: {x: 0, y: 0, z: 0}
---- !u!21 &553145022
-Material:
-  serializedVersion: 6
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_Name: Sprites/Default
-  m_Shader: {fileID: 10753, guid: 0000000000000000f000000000000000, type: 0}
-  m_ShaderKeywords: 
-  m_LightmapFlags: 4
-  m_EnableInstancingVariants: 0
-  m_DoubleSidedGI: 0
-  m_CustomRenderQueue: -1
-  stringTagMap: {}
-  disabledShaderPasses: []
-  m_SavedProperties:
-    serializedVersion: 3
-    m_TexEnvs:
-    - _AlphaTex:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _MainTex:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    m_Floats:
-    - PixelSnap: 0
-    - _EnableExternalAlpha: 0
-    m_Colors:
-    - _Color: {r: 1, g: 1, b: 1, a: 1}
-    - _Flip: {r: 1, g: 1, b: 1, a: 1}
-    - _RendererColor: {r: 1, g: 1, b: 1, a: 1}
 --- !u!1 &562209655 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 7263674204287307306, guid: 7b10d3d102109ca40a827cf96e474af4,
@@ -5546,7 +5562,7 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: -160}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!43 &1849857457
+--- !u!43 &1785586905
 Mesh:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -6549,6 +6565,11 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 198353851013410906, guid: f62395800f28e6d4791d018b43226c7a,
         type: 3}
+    - target: {fileID: 4540630645857077303, guid: 70bb93077b4311b42a96fc63581d311c,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 4540630645857083697, guid: 70bb93077b4311b42a96fc63581d311c,
         type: 3}
       propertyPath: m_Name
@@ -6613,12 +6634,12 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Mesh
       value: 
-      objectReference: {fileID: 1849857457}
+      objectReference: {fileID: 1785586905}
     - target: {fileID: 4540630646272636946, guid: 70bb93077b4311b42a96fc63581d311c,
         type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
-      objectReference: {fileID: 553145022}
+      objectReference: {fileID: 320308744}
     - target: {fileID: 4540630646274687428, guid: 70bb93077b4311b42a96fc63581d311c,
         type: 3}
       propertyPath: m_IsActive
@@ -6644,7 +6665,8 @@ PrefabInstance:
       propertyPath: lineRenderer
       value: 
       objectReference: {fileID: 208155793}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 4540630645863140727, guid: 70bb93077b4311b42a96fc63581d311c, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 70bb93077b4311b42a96fc63581d311c, type: 3}
 --- !u!4 &4540630644941175434 stripped
 Transform:

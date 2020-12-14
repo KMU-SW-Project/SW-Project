@@ -15,6 +15,12 @@ public class InfinityTest : MonoBehaviour
         GameManager.GetInstance().SetPlayerCameraPosition(player.transform);
     }
 
+    private void Start()
+    {
+        GameManager.GetInstance().SetBGM(GameMode.Infinity);
+        GameManager.GetInstance().modeData.currentPlayMode = GameMode.Infinity;
+    }
+
     public void GoMainMenu()
     {
         loadScene.SetActive(true);

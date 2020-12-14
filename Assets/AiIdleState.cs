@@ -16,6 +16,8 @@ public class AiIdleState : StateMachineBehaviour
 
     override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
+        if (GameManager.GetInstance().modeData.currentPlayMode != GameMode.Bounty) return;
+
         if(duelManger == null)
         {
             duelManger = GameObject.Find("Function").GetComponent<DuelManger>();
