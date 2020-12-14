@@ -10,7 +10,7 @@ public class DuelManger : MonoBehaviour
     public GameObject titleButton;
     public Text playerName;
     public Text EnemyName;
-    public Text playerScoreText;
+    public Text playerScoreText; 
     public Text EnemyScoreText;
     public Text screenSignal;
     public Text resultText;
@@ -18,14 +18,14 @@ public class DuelManger : MonoBehaviour
     public int playerScore { get; private set; }
     public int enemyScore { get; private set; }
     public bool playerBang = false;
+    public bool enemyBang = false;
+    public bool enemyDeath = false;
     public bool start = false;
     public bool ready;
     public gamemode currentGameMode;
+    public duelstate currentState;
 
-    Animator enemyanimator;
-    duelstate currentState;
     int Round;
-
     private void Awake()
     {
         currentState = duelstate.Start;
@@ -47,7 +47,7 @@ public class DuelManger : MonoBehaviour
         if (currentState == duelstate.Ready || currentState == duelstate.Stady)
         {
             //플레이어 자세 쳌
-            if (playerBang)
+            if (playerBang || GameManager.GetInstance().hitEnemy)
             {
                 Enemywin();
                 playerBang = false;
@@ -55,7 +55,7 @@ public class DuelManger : MonoBehaviour
         }
         else if(currentState == duelstate.Bang)
         {
-            if (playerBang)
+            if (playerBang || GameManager.GetInstance().hitEnemy)
             {
                 Playerwin();
                 playerBang = false;
@@ -125,6 +125,7 @@ public class DuelManger : MonoBehaviour
     IEnumerator DuelBang()
     {
         SFXManager.Instance.PlaySFX(vfx.Bang);
+        enemyBang = true;
         currentState = duelstate.Bang;
         screenSignal.text = "Bang!";
         Debug.Log("Bang");
@@ -134,6 +135,7 @@ public class DuelManger : MonoBehaviour
         Debug.Log("enemyFireTime  :" + enemyFiretime);
 
         yield return new WaitForSeconds(enemyFiretime);
+       
         Debug.Log("EnemyBang");
         //적 발사 anime
         //스크린 빨갛게?
@@ -149,6 +151,7 @@ public class DuelManger : MonoBehaviour
     {
         currentState = duelstate.End;
         screenSignal.text = null;
+        enemyBang = false;
         if(playerScore >= 3)
         {
             if(currentGameMode == gamemode.Bounty)
@@ -162,6 +165,7 @@ public class DuelManger : MonoBehaviour
                     else print("저장 실패");
                 });
             }
+            enemyDeath = true;
             Debug.Log("Playerwin");
             SFXManager.Instance.PlaySFX(vfx.Victory);
             titleButton.SetActive(true);
@@ -203,6 +207,8 @@ public class DuelManger : MonoBehaviour
         DuelEnd();
     }
 
+    
+
 }
 
 public enum gamemode
@@ -212,7 +218,7 @@ public enum gamemode
 }
 
 
-enum duelstate
+public enum duelstate
 {
     Start,
     Ready,
