@@ -60,6 +60,7 @@ public class TitleManager : MonoBehaviour
     {
         HandCheck();
         GameManager.GetInstance().SetBGM(GameMode.Title);
+        GameManager.GetInstance().modeData.currentPlayMode = GameMode.Title;
     }
 
     // 주 손을 선택했는지 판단

@@ -43,7 +43,7 @@ public class ClickEvent : MonoBehaviour
         _gunShotSound = GetComponent<AudioSource>();
 
         gunTrigger.AddOnStateDownListener(TriggerDown, handType);
-        gunTrigger.AddOnStateUpListener(TriggerUp, handType);
+       // gunTrigger.AddOnStateUpListener(TriggerUp, handType);
     }
 
     private void Update()
@@ -63,10 +63,10 @@ public class ClickEvent : MonoBehaviour
     }
 
 
-    public void TriggerUp(SteamVR_Action_Boolean fromAction, SteamVR_Input_Sources fromSource)
-    {
-        Debug.Log("Trigger is up");
-    }
+    //public void TriggerUp(SteamVR_Action_Boolean fromAction, SteamVR_Input_Sources fromSource)
+    //{
+    //    Debug.Log("Trigger is up");
+    //}
 
     public void TriggerDown(SteamVR_Action_Boolean fromAction, SteamVR_Input_Sources fromSource)
     {
@@ -77,31 +77,42 @@ public class ClickEvent : MonoBehaviour
             (BackendServerManager.GetInstance().accountData.handType == HandType.right.ToString()
             && fromSource == SteamVR_Input_Sources.LeftHand)) return;
 
-        _gunShotSound.Play();
-
-        _tempeffect = Player.instance.GetEffect();
-        _tempeffect.transform.position = effectPos.position;
-        _tempeffect.transform.rotation = transform.rotation;
-        _tempeffect.Play();
-
-        Player.instance.ReturnEffect(_tempeffect);
-
-        if (laserPointer.hitPoint != Vector3.zero)
+        try
         {
-            _tempeffect = Player.instance.GetMark();
-            _tempeffect.transform.position = laserPointer.hitPoint;
+            _gunShotSound.Play();
+
+            _tempeffect = Player.instance.GetEffect();
+            _tempeffect.transform.position = effectPos.position;
             _tempeffect.transform.rotation = transform.rotation;
             _tempeffect.Play();
 
-            Player.instance.ReturnMark(_tempeffect);
-        }
+            Player.instance.ReturnEffect(_tempeffect);
 
-        Debug.Log("Trigger is down");
+            if (laserPointer.hitPoint != Vector3.zero)
+            {
+                _tempeffect = Player.instance.GetMark();
+                _tempeffect.transform.position = laserPointer.hitPoint;
+                _tempeffect.transform.rotation = transform.rotation;
+                _tempeffect.Play();
+
+                Player.instance.ReturnMark(_tempeffect);
+            }
+
+            var currentMode = GameManager.GetInstance().modeData.currentPlayMode;
+
+            if (currentMode == GameMode.Bounty || currentMode == GameMode.Infinity)
+                GameManager.GetInstance().isShot = true;
+        }
+        catch (System.Exception)
+        {
+            _gunShotSound = GetComponent<AudioSource>();
+        }
+      
+      
     }
 
     public void PointerClick(object sender, PointerEventArgs e)
     {
-        print(e.target.name);
         // 버튼이면 이미지 색 교체
         if (e.target.name.Contains(targetName.Button.ToString()))
         {
@@ -119,7 +130,6 @@ public class ClickEvent : MonoBehaviour
             || GameManager.GetInstance().modeData.currentPlayMode == GameMode.Infinity))
         {
             GameManager.GetInstance().hitEnemy = true;
-            //Destroy(e.target.gameObject);
         }
 
         // 각 버튼 이벤트 실행

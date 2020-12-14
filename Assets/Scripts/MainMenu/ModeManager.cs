@@ -66,6 +66,9 @@ public partial class ModeManager : MonoBehaviour
     private void Start()
     {
         GameManager.GetInstance().SetBGM(GameMode.MainMenu);
+        GameManager.GetInstance().modeData.currentPlayMode = GameMode.MainMenu;
+        GameManager.GetInstance().modeData.currentPlayAiData = null;
+        
     }
 
     void SetOfflineMode()
@@ -136,8 +139,6 @@ public partial class ModeManager : MonoBehaviour
 
     private void LoadScene(GameMode mode)
     {
-        GameManager.GetInstance().modeData.currentPlayMode = mode;
-
         switch (mode)
         {
             case GameMode.Infinity:
