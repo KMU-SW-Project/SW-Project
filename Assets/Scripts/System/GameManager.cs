@@ -79,21 +79,16 @@ public class GameManager : MonoBehaviour
 
             var obj = GameObject.Find("Player");
             if (obj) Destroy(obj.gameObject);
-            // Destroy(player);
         }
 
-      //  player = GameObject.Find("Player");
         instance = this;
 
         DontDestroyOnLoad(gameObject);
         DontDestroyOnLoad(player);
 
-        if(userData.dataIndate != string.Empty)
-        {
+        if (userData.dataIndate != string.Empty)
             Sound.BGM = Sound.SFX = 8;
-        }
 
-        CreatePool();
         modeData.enemyData = new List<EnemyAI>();
     }
 
@@ -125,49 +120,6 @@ public class GameManager : MonoBehaviour
     [SerializeField] private ParticleSystem _markEffectPrefab;
     [SerializeField] private Transform _weaponParent;
     [SerializeField] private ParticleSystem _effectPrefab;
-
-    private void CreatePool()
-    {
-        _markEffectPool = new Queue<ParticleSystem>();
-        _shotEffectPool = new Queue<ParticleSystem>();
-
-        for (int i = 0; i < 20; i++)
-        {
-            var effect = Instantiate(_effectPrefab, _weaponParent.GetChild(0));
-            var mark = Instantiate(_markEffectPrefab, _weaponParent.GetChild(1));
-
-            effect.gameObject.SetActive(false);
-            _shotEffectPool.Enqueue(effect);
-
-            mark.gameObject.SetActive(false);
-            _markEffectPool.Enqueue(mark);
-        }
-    }
-
-    public ParticleSystem GetEffect()
-    {
-        var effect = _shotEffectPool.Dequeue();
-        effect.gameObject.SetActive(true);
-        return effect;
-    }
-
-    public ParticleSystem GetMark()
-    {
-        var mark = _markEffectPool.Dequeue();
-        mark.gameObject.SetActive(true);
-
-        return mark;
-    }
-
-    public void ReturnEffect(ParticleSystem obj)
-    {
-        _shotEffectPool.Enqueue(obj);
-    }
-
-    public void ReturnMark(ParticleSystem obj)
-    {
-        _markEffectPool.Enqueue(obj);
-    }
 
     #endregion
     public void SetUserControllerModel(HandType handtype)
@@ -208,16 +160,16 @@ public class GameManager : MonoBehaviour
             if (flag == "Up") Sound.BGM++;
             else Sound.BGM--;
 
-          audioMixer.SetFloat("BGM", (Sound.BGM*10) - 80);
+            audioMixer.SetFloat("BGM", (Sound.BGM * 10) - 80);
             return;
         }
 
         if (flag == "Up") Sound.SFX++;
         else Sound.SFX--;
 
-        audioMixer.SetFloat("SFX", (Sound.SFX*10) - 80);
+        audioMixer.SetFloat("SFX", (Sound.SFX * 10) - 80);
     }
-    
+
     public void SetBGM(GameMode mode)
     {
         var audioSource = player.GetComponent<AudioSource>();
@@ -225,7 +177,7 @@ public class GameManager : MonoBehaviour
         switch (mode)
         {
             case GameMode.Infinity:
-                audioSource.clip = audioArray[0];                
+                audioSource.clip = audioArray[0];
                 break;
             case GameMode.Bounty:
                 audioSource.clip = audioArray[1];
@@ -246,6 +198,6 @@ public class GameManager : MonoBehaviour
 
     public void DeleteObject()
     {
-        Destroy(player);        
+        Destroy(player);
     }
 }

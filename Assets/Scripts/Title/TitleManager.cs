@@ -78,6 +78,7 @@ public class TitleManager : MonoBehaviour
         }
         else
         {
+            GameManager.GetInstance().SetUserControllerModel(HandType.right);
             ActiveUI(UIList.selectHand);
         }
     }
