@@ -153,6 +153,8 @@ public class DuelManger : MonoBehaviour
    
     private void DuelEnd()
     {
+        var index = GameManager.GetInstance().modeData.currentPlayAiIndex;
+
         currentState = duelstate.End;
         screenSignal.text = null;
         enemyBang = false;
@@ -160,11 +162,11 @@ public class DuelManger : MonoBehaviour
         {
             if(currentGameMode == gamemode.Bounty)
             {
-                BackendServerManager.GetInstance().SetData(GameMode.Bounty, GameManager.GetInstance().modeData.currentPlayAiData.enemyID, (bool result) =>
+                BackendServerManager.GetInstance().SetData(GameMode.Bounty, GameManager.GetInstance().modeData.enemyData[index].enemyID, (bool result) =>
                 {
                     if (result)
                     {
-                        GameManager.GetInstance().modeData.currentPlayAiData.bountyMoney = -1;
+                        GameManager.GetInstance().modeData.enemyData[index].bountyMoney = -1;
                     }
                     else print("저장 실패");
                 });

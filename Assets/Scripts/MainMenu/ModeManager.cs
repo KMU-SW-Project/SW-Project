@@ -56,6 +56,7 @@ public partial class ModeManager : MonoBehaviour
         if (GameManager.GetInstance().playMode == GameMode.VRTest) player.SetActive(false);
 
         GameManager.GetInstance().SetPlayerCameraPosition(player.transform);
+        GameManager.GetInstance().modeData.currentPlayAiIndex = _seletingAIIndex;
 
         SetOfflineMode();
         UserCharacterInit();
@@ -65,9 +66,13 @@ public partial class ModeManager : MonoBehaviour
 
     private void Start()
     {
+        for (int i = 0; i < bountyAiData.Length; i++)
+        {
+            GameManager.GetInstance().modeData.enemyData.Add(bountyAiData[i]);
+        }
         GameManager.GetInstance().SetBGM(GameMode.MainMenu);
         GameManager.GetInstance().modeData.currentPlayMode = GameMode.MainMenu;
-        GameManager.GetInstance().modeData.currentPlayAiData = null;
+        GameManager.GetInstance().modeData.currentPlayAiIndex = -1;
         
     }
 
@@ -151,6 +156,10 @@ public partial class ModeManager : MonoBehaviour
                 nextScene.levelName = GameMode.Training.ToString();
                 break;
             case GameMode.Title:
+                Destroy(GameObject.Find("[SteamVR]"));
+                Destroy(GameObject.Find("FollowHead"));
+               // Destroy(GameManager.GetInstance().player);
+                //Destroy(GameManager.GetInstance().gameObject);
                 nextScene.levelName = GameMode.Title.ToString();
                 break;
             case GameMode.MainMenu:
@@ -202,8 +211,8 @@ public partial class ModeManager : MonoBehaviour
     // 현상금 모드 초기화
     void BountyModeInit()
     {
-        EnemyAI playedAI = GameManager.GetInstance().modeData.currentPlayAiData;
-        _seletingAIIndex = playedAI == null ? 0 : --playedAI.enemyID;
+     //   EnemyAI playedAI = GameManager.GetInstance().modeData.enemyData[GameManager.GetInstance().modeData.currentPlayAiIndex];
+      //  _seletingAIIndex = playedAI == null ? 0 : --playedAI.enemyID;
 
         _aiCharacterList = new GameObject[bountyAiData.Length];
 
@@ -234,6 +243,8 @@ public partial class ModeManager : MonoBehaviour
     // 현상금 AI 정보를 UI에 셋팅
     void SetBountyAIModel(int index)
     {
+        GameManager.GetInstance().modeData.currentPlayAiIndex = index;
+
         for (int i = 0; i < bountyAiData.Length; i++)
             _aiCharacterList[i].SetActive(false);
 
@@ -247,7 +258,7 @@ public partial class ModeManager : MonoBehaviour
     // 현상금모드 시작
     public void StartAIMode()
     {
-        GameManager.GetInstance().modeData.currentPlayAiData = bountyAiData[_seletingAIIndex];
+       
         LoadScene(GameMode.Bounty);
     }
     #endregion
