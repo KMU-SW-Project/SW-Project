@@ -5,7 +5,7 @@
       "app_key": "application.generated.unity.bangbangpow.exe",
       "launch_type": "url",
       "url": "steam://launch/",
-      "action_manifest_path": "D:\\Unity\\SW-Project\\Assets\\StreamingAssets\\SteamVR\\actions.json",
+      "action_manifest_path": "C:\\Users\\cjfal\\Desktop\\SW-Project\\Assets\\StreamingAssets\\SteamVR\\actions.json",
       "strings": {
         "en_us": {
           "name": "BangBangPow [Testing]"

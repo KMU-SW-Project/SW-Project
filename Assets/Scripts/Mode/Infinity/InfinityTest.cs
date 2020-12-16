@@ -97,8 +97,7 @@ public class InfinityTest : MonoBehaviour
             if (result)
             {
                 print("등록 성공");
-                GameManager.GetInstance().userData.userInfinityScore = winScore;
-                GoMainMenu();
+                GameManager.GetInstance().userData.userInfinityScore = winScore;              
             }
             else print("등록 실패");
         });
