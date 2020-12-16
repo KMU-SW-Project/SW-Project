@@ -16,10 +16,10 @@ public class AiIdleState : StateMachineBehaviour
 
     override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        if (GameManager.GetInstance().modeData.currentPlayMode != GameMode.Bounty ||
+        if (GameManager.GetInstance().modeData.currentPlayMode != GameMode.Bounty &&
             GameManager.GetInstance().modeData.currentPlayMode != GameMode.Infinity ) return;
 
-        if(duelManger == null)
+        if (duelManger == null)
         {
             duelManger = GameObject.Find("Function").GetComponent<DuelManger>();
         }
@@ -33,11 +33,18 @@ public class AiIdleState : StateMachineBehaviour
             animator.SetInteger("state", 2);
             animator.SetTrigger("death");
         }
+        
     }
 
     override public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        
+        if (duelManger.enemyDeath)
+        {
+           duelManger.enemyDeath = false;
+           animator.SetInteger("state", 0);
+        }
+      
+
     }
 
 }
