@@ -26,6 +26,7 @@ public class DuelManger : MonoBehaviour
     public duelstate currentState;
     public InfinityTest infinityTest;
 
+
     int index = GameManager.GetInstance().modeData.currentPlayAiIndex;
     private void Awake()
     {
@@ -109,8 +110,6 @@ public class DuelManger : MonoBehaviour
             enemyScore = 0;
             enemyBang = false;
             enemyDeath = false;
-
-
         }
     }
 
@@ -163,8 +162,8 @@ public class DuelManger : MonoBehaviour
         currentState = duelstate.Bang;
         screenSignal.text = "Bang!";
         Debug.Log("Bang");
-
         float enemyFiretime;
+
         enemyFiretime = currentEnemyAI.GetFireTime();
         Debug.Log("enemyFireTime  :" + enemyFiretime);
 
@@ -205,7 +204,6 @@ public class DuelManger : MonoBehaviour
     //EnemyWin, PlayerWin 이후 호출
     private void DuelEnd()
     {
-
         //var index = GameManager.GetInstance().modeData.currentPlayAiIndex;
 
         currentState = duelstate.End;
@@ -260,7 +258,6 @@ public class DuelManger : MonoBehaviour
         //무한 모드 시
         else if (currentGameMode == gamemode.Infinity)
         {
-
             if (enemyScore >= 1)
             {
                 SFXManager.Instance.PlaySFX(vfx.Lose);
@@ -276,17 +273,21 @@ public class DuelManger : MonoBehaviour
             else
             {
                 enemyDeath = true;
-                infinityTest.ChangeEnemy();
-                readyButton.SetActive(true);
+
+                Invoke("Next", 2.7f);
+               
             }
         }
 
     }
 
+    void Next()
+    {
+        infinityTest.ChangeEnemy();
+        currentEnemyAI = infinityTest.currentAI;
 
-
-
-
+        readyButton.SetActive(true);
+    }
 }
 
 public enum gamemode
