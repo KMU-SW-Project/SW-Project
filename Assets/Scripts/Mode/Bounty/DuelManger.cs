@@ -29,6 +29,9 @@ public class DuelManger : MonoBehaviour
     {
         currentState = duelstate.Start;
         screenSignal.text = null;
+
+        GameManager.GetInstance().SetBGM(GameMode.Bounty);
+        GameManager.GetInstance().modeData.currentPlayMode = GameMode.Bounty;
     }
 
     private void Update()
@@ -96,6 +99,8 @@ public class DuelManger : MonoBehaviour
     {
         StartCoroutine(DuelReady());
 
+        // 총 쏘는거 초기화
+        GameManager.GetInstance().isShot = false;
         // 업데이트에서 true 되면 죽는 애니메이션 실행하는?게 어떨까
         GameManager.GetInstance().hitEnemy = false;
 
