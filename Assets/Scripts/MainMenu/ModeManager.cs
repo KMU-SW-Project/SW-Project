@@ -51,6 +51,12 @@ public partial class ModeManager : MonoBehaviour
     [SerializeField] private GameObject[] targetList;
     private bool _isSecondTarget;
 
+    [Header("Option")]
+    [SerializeField] private GameObject optionUI;
+    [SerializeField] private Text bgmText;
+    [SerializeField] private Text sfxText;
+    [SerializeField] private Text guideText;
+
     private void Awake()
     {
         if (GameManager.GetInstance().playMode == GameMode.VRTest) player.SetActive(false);
@@ -83,7 +89,6 @@ public partial class ModeManager : MonoBehaviour
             nicknameText.text = GameManager.GetInstance().userData.userNickname;
             return;
         }
-
         // 닉네임
         nicknameText.text = "OFFLINE";
 
@@ -107,7 +112,11 @@ public partial class ModeManager : MonoBehaviour
         else if (type == GameMode.Infinity.ToString()) UiManager(GameMode.Infinity, flag);
         else if (type == GameMode.Bounty.ToString()) UiManager(GameMode.Bounty, flag);
         else if (type == GameMode.Training.ToString()) UiManager(GameMode.Training, flag);
-        else LoadScene(GameMode.Title);
+        else
+        {
+            optionUI.SetActive(flag);
+            SetOption();
+        }
     }
 
     void UiManager(GameMode modeName, bool flag)
@@ -172,8 +181,39 @@ public partial class ModeManager : MonoBehaviour
         nextScene.gameObject.SetActive(true);
     }
 
+    public void SetOption()
+    {
+        bgmText.text = Sound.BGM.ToString();
+        sfxText.text = Sound.SFX.ToString();
+
+        var guide = GameManager.GetInstance().gunGuide;
+
+        if (guide)
+        {
+            guideText.text = "조준선 : <color=yellow>켜짐</color>";
+            return;
+        }
+        guideText.text = "조준선 : 꺼짐";
+    }
+
+    public void SetGunGuide()
+    {
+        var guide = GameManager.GetInstance().gunGuide;
+        guide = !guide;
+
+        GameManager.GetInstance().gunGuide = guide;
+
+        if (guide)
+        {
+            guideText.text = "조준선 : <color=yellow>켜짐</color>";
+            return;
+        }
+        guideText.text = "조준선 : 꺼짐";
+    }
+
+
     #region 무한 모드
-    
+
     void InfinityModeInit()
     {
         for (int i = 0; i < rankList.Length; i++)
