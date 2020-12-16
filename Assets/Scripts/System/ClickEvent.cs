@@ -77,16 +77,16 @@ public class ClickEvent : MonoBehaviour
             (BackendServerManager.GetInstance().accountData.handType == HandType.right.ToString()
             && fromSource == SteamVR_Input_Sources.LeftHand)) return;
 
-        try
-        {
             _gunShotSound.Play();
 
-            _tempeffect = Player.instance.GetEffect();
+        // GameManager.GetInstance()
+        // Player.instance
+        _tempeffect = Player.instance.GetEffect();
             _tempeffect.transform.position = effectPos.position;
             _tempeffect.transform.rotation = transform.rotation;
             _tempeffect.Play();
 
-            Player.instance.ReturnEffect(_tempeffect);
+        Player.instance.ReturnEffect(_tempeffect);
 
             if (laserPointer.hitPoint != Vector3.zero)
             {
@@ -95,20 +95,13 @@ public class ClickEvent : MonoBehaviour
                 _tempeffect.transform.rotation = transform.rotation;
                 _tempeffect.Play();
 
-                Player.instance.ReturnMark(_tempeffect);
+            Player.instance.ReturnMark(_tempeffect);
             }
 
             var currentMode = GameManager.GetInstance().modeData.currentPlayMode;
 
             if (currentMode == GameMode.Bounty || currentMode == GameMode.Infinity)
                 GameManager.GetInstance().isShot = true;
-        }
-        catch (System.Exception)
-        {
-            _gunShotSound = GetComponent<AudioSource>();
-        }
-      
-      
     }
 
     public void PointerClick(object sender, PointerEventArgs e)
