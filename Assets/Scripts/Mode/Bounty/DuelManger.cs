@@ -24,22 +24,42 @@ public class DuelManger : MonoBehaviour
     public bool ready;
     public gamemode currentGameMode;
     public duelstate currentState;
+    public InfinityTest infinityTest;
 
     private void Awake()
     {
         currentState = duelstate.Start;
         screenSignal.text = null;
 
-        GameManager.GetInstance().SetBGM(GameMode.Bounty);
-        GameManager.GetInstance().modeData.currentPlayMode = GameMode.Bounty;
+        if(currentGameMode == gamemode.Bounty)
+        {
+            GameManager.GetInstance().SetBGM(GameMode.Bounty);
+            GameManager.GetInstance().modeData.currentPlayMode = GameMode.Bounty;
+        }
+        else if (currentGameMode == gamemode.Infinity)
+        {
+            GameManager.GetInstance().SetBGM(GameMode.Infinity);
+            GameManager.GetInstance().modeData.currentPlayMode = GameMode.Infinity;
+
+        }
+     
     }
 
     private void Update()
     {
-        // playerName.text = GameManager.GetInstance().userData.userNickname;
-        EnemyName.text = currentEnemyAI.enemyName;
+        playerName.text = GameManager.GetInstance().userData.userNickname;
         playerScoreText.text = playerScore.ToString();
-        EnemyScoreText.text = enemyScore.ToString();
+
+        if(currentGameMode == gamemode.Bounty)
+        {
+            EnemyName.text = currentEnemyAI.enemyName;
+            EnemyScoreText.text = enemyScore.ToString();
+        }
+        else if(currentGameMode == gamemode.Infinity)
+        {
+            EnemyName.gameObject.SetActive(false);
+            EnemyScoreText.gameObject.SetActive(false);
+        }
 
         if (start == false && currentState == duelstate.Start)
         {
@@ -250,11 +270,14 @@ public class DuelManger : MonoBehaviour
                 resultText.gameObject.SetActive(true);
                 resultText.text = "You Lose !!!!";
 
+                infinityTest.JoinRanking(playerScore);
+
                 Debug.Log("EnemyWin");
             }
             else
             {
                 enemyDeath = true;
+                infinityTest.ChangeEnemy();
                 readyButton.SetActive(true);
             }
         }

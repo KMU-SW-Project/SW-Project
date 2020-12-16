@@ -51,7 +51,7 @@ public class InfinityTest : MonoBehaviour
             if (spawnList[i].activeSelf)
             {
                 spawnList[i].SetActive(false);
-                spawnList[i + 1].SetActive(true);
+                spawnList[i + 1 >= spawnList.Length ? 0 : i + 1].SetActive(true);
                 break;
             }
         }
