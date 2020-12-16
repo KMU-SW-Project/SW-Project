@@ -26,6 +26,7 @@ public class DuelManger : MonoBehaviour
     public duelstate currentState;
     public InfinityTest infinityTest;
 
+    int index = GameManager.GetInstance().modeData.currentPlayAiIndex;
     private void Awake()
     {
         currentState = duelstate.Start;
@@ -35,6 +36,7 @@ public class DuelManger : MonoBehaviour
         {
             GameManager.GetInstance().SetBGM(GameMode.Bounty);
             GameManager.GetInstance().modeData.currentPlayMode = GameMode.Bounty;
+            currentEnemyAI = GameManager.GetInstance().modeData.enemyData[index];
         }
         else if (currentGameMode == gamemode.Infinity)
         {
@@ -110,8 +112,6 @@ public class DuelManger : MonoBehaviour
 
 
         }
-        //적 애니메이션 전환
-
     }
 
     //Button에 의해 호출
@@ -121,7 +121,6 @@ public class DuelManger : MonoBehaviour
 
         // 총 쏘는거 초기화
         GameManager.GetInstance().isShot = false;
-        // 업데이트에서 true 되면 죽는 애니메이션 실행하는?게 어떨까
         GameManager.GetInstance().hitEnemy = false;
 
         readyButton.SetActive(false);
@@ -207,7 +206,7 @@ public class DuelManger : MonoBehaviour
     private void DuelEnd()
     {
 
-        var index = GameManager.GetInstance().modeData.currentPlayAiIndex;
+        //var index = GameManager.GetInstance().modeData.currentPlayAiIndex;
 
         currentState = duelstate.End;
         screenSignal.text = null;
