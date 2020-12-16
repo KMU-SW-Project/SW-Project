@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -7,9 +8,11 @@ public class InfinityTest : MonoBehaviour
     public GameObject loadScene;
     public GameObject player;
     public Transform spawnPos;
+    public EnemyAI currentAI;
 
-    private int score;
     private GameObject[] spawnList;
+    private EnemyAI[] spawnAIList;
+
 
     private void Awake()
     {
@@ -20,25 +23,26 @@ public class InfinityTest : MonoBehaviour
 
     private void Start()
     {
-        score = 0;
         GameManager.GetInstance().SetBGM(GameMode.Infinity);
         GameManager.GetInstance().modeData.currentPlayMode = GameMode.Infinity;
 
         var length = GameManager.GetInstance().modeData.enemyData.Count;
 
         spawnList = new GameObject[10];
-
+        spawnAIList = new EnemyAI[10];
         for (int i = 0; i < spawnList.Length; i++)
         {
-            var index = Random.Range(0, length);
+            var index = UnityEngine.Random.Range(0, length);
 
             var obj = Instantiate(GameManager.GetInstance().modeData.enemyData[index].model, spawnPos.GetChild(0).transform).gameObject;
           
             obj.SetActive(false);
             spawnList[i] = obj;
+            spawnAIList[i] = GameManager.GetInstance().modeData.enemyData[index];
         }
 
         spawnList[0].SetActive(true);
+        currentAI = spawnAIList[0];
     }
 
     /// <summary>
@@ -52,11 +56,12 @@ public class InfinityTest : MonoBehaviour
             {
                 spawnList[i].SetActive(false);
                 spawnList[i + 1 >= spawnList.Length ? 0 : i + 1].SetActive(true);
+
+                currentAI = spawnAIList[i + 1 >= spawnList.Length ? 0 : i + 1];
+
                 break;
             }
         }
-
-        score++;
     }
 
     public void GoMainMenu()
@@ -78,8 +83,7 @@ public class InfinityTest : MonoBehaviour
 
         if (winScore < GameManager.GetInstance().userData.userInfinityScore)
         {
-            print("랭킹에 등록된 점수보다 낮기때문에 등록 불가");
-            GoMainMenu();
+            print("랭킹에 등록된 점수보다 낮기때문에 등록 불가");           
             return;
         }
 
