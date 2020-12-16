@@ -10,12 +10,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7b721978fdb3f5642aedc51f75d66e07, type: 3}
-  m_Name: 3
+  m_Name: "\uB290\uB9BF\uD55C \uD1B0"
   m_EditorClassIdentifier: 
-  enemyName: 3
-  enemyID: 3
-  diffculty: 3
-  bountyMoney: 30
-  fireTime: 0.6
-  model: {fileID: 1214723647702548, guid: e85f10072d335224984d9b8ae2e93843, type: 3}
+  enemyName: "\uB290\uB9BF\uD55C \uD1B0"
+  enemyID: 1
+  diffculty: 1
+  bountyMoney: -1
+  fireTime: 1
+  model: {fileID: 1040643676778012, guid: 15a550206f811c346b37f3a3f4495178, type: 3}
   scale: {x: 1.7, y: 1.7, z: 1.7}

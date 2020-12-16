@@ -10,9 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7b721978fdb3f5642aedc51f75d66e07, type: 3}
-  m_Name: 2
+  m_Name: "\uBE44\uC5F4\uD55C \uC548\uB098"
   m_EditorClassIdentifier: 
-  enemyName: 2
+  enemyName: "\uBE44\uC5F4\uD55C \uC548\uB098"
   enemyID: 2
   diffculty: 2
   bountyMoney: 20
