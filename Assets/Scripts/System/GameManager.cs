@@ -25,10 +25,12 @@ public class UserData
     public int userInfinityScore;
 }
 
+[Serializable]
 public class ModeData
 {
     public GameMode currentPlayMode;
-    public EnemyAI currentPlayAiData;
+    public int currentPlayAiIndex;
+    public List<EnemyAI> enemyData;
     public int currentSelectedTarget;
 }
 
@@ -74,19 +76,25 @@ public class GameManager : MonoBehaviour
         if (instance != null)
         {
             Destroy(instance);
-            Destroy(player);
+
+            var obj = GameObject.Find("Player");
+            if (obj) Destroy(obj.gameObject);
+            // Destroy(player);
         }
-        player = GameObject.Find("Player");
+
+      //  player = GameObject.Find("Player");
         instance = this;
 
         DontDestroyOnLoad(gameObject);
         DontDestroyOnLoad(player);
-        player.name = "donPlayer";
 
         if(userData.dataIndate != string.Empty)
         {
             Sound.BGM = Sound.SFX = 8;
         }
+
+        CreatePool();
+        modeData.enemyData = new List<EnemyAI>();
     }
 
     public static GameManager GetInstance()
@@ -107,10 +115,61 @@ public class GameManager : MonoBehaviour
     // 0,1 = left gun-hand , 2,3 = right gun-hand
     public GameObject[] handModel;
     public GameMode playMode;
-    public bool gunGuide, hitEnemy;
+    public bool gunGuide, hitEnemy, isShot;
     public AudioMixer audioMixer;
     public AudioClip[] audioArray;
 
+    #region 이펙트 풀링
+    private Queue<ParticleSystem> _shotEffectPool;
+    private Queue<ParticleSystem> _markEffectPool;
+    [SerializeField] private ParticleSystem _markEffectPrefab;
+    [SerializeField] private Transform _weaponParent;
+    [SerializeField] private ParticleSystem _effectPrefab;
+
+    private void CreatePool()
+    {
+        _markEffectPool = new Queue<ParticleSystem>();
+        _shotEffectPool = new Queue<ParticleSystem>();
+
+        for (int i = 0; i < 20; i++)
+        {
+            var effect = Instantiate(_effectPrefab, _weaponParent.GetChild(0));
+            var mark = Instantiate(_markEffectPrefab, _weaponParent.GetChild(1));
+
+            effect.gameObject.SetActive(false);
+            _shotEffectPool.Enqueue(effect);
+
+            mark.gameObject.SetActive(false);
+            _markEffectPool.Enqueue(mark);
+        }
+    }
+
+    public ParticleSystem GetEffect()
+    {
+        var effect = _shotEffectPool.Dequeue();
+        effect.gameObject.SetActive(true);
+        return effect;
+    }
+
+    public ParticleSystem GetMark()
+    {
+        var mark = _markEffectPool.Dequeue();
+        mark.gameObject.SetActive(true);
+
+        return mark;
+    }
+
+    public void ReturnEffect(ParticleSystem obj)
+    {
+        _shotEffectPool.Enqueue(obj);
+    }
+
+    public void ReturnMark(ParticleSystem obj)
+    {
+        _markEffectPool.Enqueue(obj);
+    }
+
+    #endregion
     public void SetUserControllerModel(HandType handtype)
     {
         for (int i = 0; i < handModel.Length; i++)
@@ -183,5 +242,10 @@ public class GameManager : MonoBehaviour
         }
 
         audioSource.Play();
+    }
+
+    public void DeleteObject()
+    {
+        Destroy(player);        
     }
 }

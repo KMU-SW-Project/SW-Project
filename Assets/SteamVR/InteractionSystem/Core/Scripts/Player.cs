@@ -48,7 +48,6 @@ namespace Valve.VR.InteractionSystem
 		[SerializeField] private ParticleSystem _markEffectPrefab;
 		[SerializeField] private Transform _weaponParent;
 		[SerializeField] private ParticleSystem _effectPrefab;
-		[SerializeField] private Text headsetState;
 		//-------------------------------------------------
 		// Singleton instance of the Player. Only one can exist at a time.
 		//-------------------------------------------------
@@ -349,12 +348,10 @@ namespace Valve.VR.InteractionSystem
             {
                 if (headsetOnHead.GetStateDown(SteamVR_Input_Sources.Head))
                 {
-					headsetState.text = "헤드셋 착용";
-                    Debug.Log("<b>SteamVR Interaction System</b> Headset placed on head");
+					Debug.Log("<b>SteamVR Interaction System</b> Headset placed on head");
                 }
                 else if (headsetOnHead.GetStateUp(SteamVR_Input_Sources.Head))
-                {
-					headsetState.text = "<Color=red>헤드셋 미착용</Color>";
+                {				
 					Debug.Log("<b>SteamVR Interaction System</b> Headset removed");
                 }
             }

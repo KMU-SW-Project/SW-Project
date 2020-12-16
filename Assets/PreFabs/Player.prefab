@@ -71,7 +71,6 @@ GameObject:
   m_Component:
   - component: {fileID: 4543492650380717910}
   - component: {fileID: 4558912122446202636}
-  - component: {fileID: 4475534140525098850}
   - component: {fileID: 4509948118974670712}
   m_Layer: 0
   m_Name: Camera
@@ -137,14 +136,6 @@ Camera:
   m_OcclusionCulling: 1
   m_StereoConvergence: 10
   m_StereoSeparation: 0.022
---- !u!81 &4475534140525098850
-AudioListener:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4539630632020843336}
-  m_Enabled: 0
 --- !u!114 &4509948118974670712
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1711,8 +1702,10 @@ MonoBehaviour:
     actionPath: /actions/default/in/HeadsetOnHead
     needsReinit: 0
   allowToggleTo2D: 1
+  _markEffectPrefab: {fileID: 0}
   _weaponParent: {fileID: 803677742}
   _effectPrefab: {fileID: 19885060, guid: 2574ca206a571a342a7fab69fdfb87aa, type: 3}
+  headsetState: {fileID: 0}
 --- !u!1 &4540630645857085279
 GameObject:
   m_ObjectHideFlags: 0
@@ -2955,13 +2948,14 @@ MonoBehaviour:
     actionPath: /actions/default/in/InteractUI
     needsReinit: 0
   active: 1
-  color: {r: 0, g: 0, b: 0, a: 0}
   thickness: 0.002
-  clickColor: {r: 0, g: 1, b: 0, a: 1}
   holder: {fileID: 0}
-  pointer: {fileID: 0}
+  dot: {fileID: 0}
   addRigidBody: 0
   reference: {fileID: 0}
+  hitPoint: {x: 0, y: 0, z: 0}
+  dist: 100
+  bHit: 0
 --- !u!114 &4540630646340150697
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2980,6 +2974,8 @@ MonoBehaviour:
     needsReinit: 0
   handType: 2
   effectPos: {fileID: 0}
+  bulletMark: {fileID: 0}
+  lineRenderer: {fileID: 0}
 --- !u!1 &4540630646274707848
 GameObject:
   m_ObjectHideFlags: 0
@@ -3227,13 +3223,14 @@ MonoBehaviour:
     actionPath: /actions/default/in/InteractUI
     needsReinit: 0
   active: 1
-  color: {r: 0, g: 0, b: 0, a: 0}
   thickness: 0.002
-  clickColor: {r: 0, g: 1, b: 0, a: 1}
   holder: {fileID: 0}
-  pointer: {fileID: 0}
+  dot: {fileID: 0}
   addRigidBody: 0
   reference: {fileID: 0}
+  hitPoint: {x: 0, y: 0, z: 0}
+  dist: 100
+  bHit: 0
 --- !u!114 &4540630644950909028
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3252,6 +3249,8 @@ MonoBehaviour:
     needsReinit: 0
   handType: 1
   effectPos: {fileID: 7671700886049685497}
+  bulletMark: {fileID: 0}
+  lineRenderer: {fileID: 0}
 --- !u!82 &1770669423
 AudioSource:
   m_ObjectHideFlags: 0

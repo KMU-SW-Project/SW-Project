@@ -25,10 +25,14 @@ public class DuelManger : MonoBehaviour
     public gamemode currentGameMode;
     public duelstate currentState;
 
+    int Round;
     private void Awake()
     {
         currentState = duelstate.Start;
         screenSignal.text = null;
+
+        GameManager.GetInstance().SetBGM(GameMode.Bounty);
+        GameManager.GetInstance().modeData.currentPlayMode = GameMode.Bounty;
     }
 
     private void Update()
@@ -45,7 +49,8 @@ public class DuelManger : MonoBehaviour
 
         if (currentState == duelstate.Ready || currentState == duelstate.Stady)
         {
-            if (playerBang || GameManager.GetInstance().hitEnemy)
+            //플레이어 자세 쳌
+            if (playerBang || GameManager.GetInstance().hitEnemy || GameManager.GetInstance().isShot)
             {
                 Enemywin();
                 playerBang = false;
@@ -66,43 +71,33 @@ public class DuelManger : MonoBehaviour
         }
     }
 
-    //듀얼 초기화
     private void DuelStart()
     {
         start = true;
-        if( currentGameMode == gamemode.Bounty)
+        if(currentGameMode == gamemode.Bounty)
         {
-            playerScore = 0;
-            enemyScore = 0;
-            enemyBang = false;
-            enemyDeath = false;
-
+            Round = 5;
         }
-        else if(currentGameMode == gamemode.Infinity)
+        else if( currentGameMode == gamemode.Infinity)
         {
-            enemyScore = 0;
-            enemyBang = false;
-            enemyDeath = false;
-
-
+            Round = 1;
         }
+
         //적 애니메이션 전환
 
     }
 
-    //Button에 의해 호출
     public void DuelReadyCall()
     {
         StartCoroutine(DuelReady());
 
-        // 업데이트에서 true 되면 죽는 애니메이션 실행하는?게 어떨까
+        // 총 쏘는거 초기화
+        GameManager.GetInstance().isShot = false;
         GameManager.GetInstance().hitEnemy = false;
 
         readyButton.SetActive(false);
     }
 
-
-    //DuelReady -> DuelStady -> DuelBang 순으로 호출
     IEnumerator DuelReady()
     {
         //Ready신호음 출력
@@ -146,17 +141,59 @@ public class DuelManger : MonoBehaviour
         yield return new WaitForSeconds(enemyFiretime);
        
         Debug.Log("EnemyBang");
+        //적 발사 anime
         //스크린 빨갛게?
         Enemywin();
     }
-    
-    //키보드 디버깅용
+
     void PlayerBang()
     {
         playerBang = true;
     }
+   
+    private void DuelEnd()
+    {
+        var index = GameManager.GetInstance().modeData.currentPlayAiIndex;
 
-    //한번의 결투에 플레이어 승리시 호출
+        currentState = duelstate.End;
+        screenSignal.text = null;
+        enemyBang = false;
+        if(playerScore >= 3)
+        {
+            if(currentGameMode == gamemode.Bounty)
+            {
+                BackendServerManager.GetInstance().SetData(GameMode.Bounty, GameManager.GetInstance().modeData.enemyData[index].enemyID, (bool result) =>
+                {
+                    if (result)
+                    {
+                        GameManager.GetInstance().modeData.enemyData[index].bountyMoney = -1;
+                    }
+                    else print("저장 실패");
+                });
+            }
+            enemyDeath = true;
+            Debug.Log("Playerwin");
+            SFXManager.Instance.PlaySFX(vfx.Victory);
+            titleButton.SetActive(true);
+            resultText.gameObject.SetActive(true);
+            resultText.text = "You Win !!!!";
+
+        }
+        else if(enemyScore >= 3)
+        {
+            Debug.Log("EnemyWin");
+            SFXManager.Instance.PlaySFX(vfx.Lose);
+            titleButton.SetActive(true);
+            resultText.gameObject.SetActive(true);
+            resultText.text = "You Lose !!!!";
+        }
+        else
+        {
+            readyButton.SetActive(true);
+        }
+        
+    }
+
     private void Playerwin()
     {
         SFXManager.Instance.PlaySFX(vfx.Victory);
@@ -166,7 +203,6 @@ public class DuelManger : MonoBehaviour
         DuelEnd();
     }
 
-    //한번의 결투에 적 승리시 호출
     private void Enemywin()
     {
         SFXManager.Instance.PlaySFX(vfx.Lose);
@@ -176,82 +212,6 @@ public class DuelManger : MonoBehaviour
         //적 애니메이션?
         DuelEnd();
     }
-
-    //EnemyWin, PlayerWin 이후 호출
-    private void DuelEnd()
-    {
-        currentState = duelstate.End;
-        screenSignal.text = null;
-        enemyBang = false;
-        //현상금 모드 시
-        if(currentGameMode == gamemode.Bounty) { 
-
-            if (playerScore >= 3)
-            {
-                if (currentGameMode == gamemode.Bounty)
-                {
-                    BackendServerManager.GetInstance().SetData(GameMode.Bounty, GameManager.GetInstance().modeData.currentPlayAiData.enemyID, (bool result) =>
-                    {
-                        if (result)
-                        {
-                            GameManager.GetInstance().modeData.currentPlayAiData.bountyMoney = -1;
-                        }
-                        else print("저장 실패");
-                    });
-                }
-
-                enemyDeath = true;
-
-                SFXManager.Instance.PlaySFX(vfx.Victory);
-
-                titleButton.SetActive(true);
-
-                resultText.gameObject.SetActive(true);
-                resultText.text = "You Win !!!!";
-
-                Debug.Log("Playerwin");
-            }
-            else if (enemyScore >= 3)
-            {
-
-                SFXManager.Instance.PlaySFX(vfx.Lose);
-                titleButton.SetActive(true);
-
-                resultText.gameObject.SetActive(true);
-                resultText.text = "You Lose ....";
-
-                Debug.Log("EnemyWin");
-            }
-            else
-            {
-                readyButton.SetActive(true);
-            }
-
-        }
-        //무한 모드 시
-        else if( currentGameMode == gamemode.Infinity)
-        {
-
-            if(enemyScore >= 1)
-            {
-                SFXManager.Instance.PlaySFX(vfx.Lose);
-                titleButton.SetActive(true);
-
-                resultText.gameObject.SetActive(true);
-                resultText.text = "You Lose !!!!";
-
-                Debug.Log("EnemyWin");
-            }
-            else
-            {
-                enemyDeath = true;
-                readyButton.SetActive(true);
-            }
-        }
-        
-    }
-
-   
 
     
 

@@ -7,21 +7,13 @@ public class SFXManager : MonoBehaviour
 {
     public AudioClip[] vfxs;
     AudioSource audioSource;
-   
+
     private static SFXManager instance = null;
 
     void Awake()
     {
         audioSource = GetComponent<AudioSource>();
-        if (null == instance)
-        {
-            instance = this;
-            DontDestroyOnLoad(this.gameObject);
-        }
-        else
-        {
-            Destroy(this.gameObject);
-        }
+        instance = this;
     }
     public static SFXManager Instance
     {
