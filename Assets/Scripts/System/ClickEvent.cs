@@ -43,7 +43,7 @@ public class ClickEvent : MonoBehaviour
         _gunShotSound = GetComponent<AudioSource>();
 
         gunTrigger.AddOnStateDownListener(TriggerDown, handType);
-       // gunTrigger.AddOnStateUpListener(TriggerUp, handType);
+        // gunTrigger.AddOnStateUpListener(TriggerUp, handType);
     }
 
     private void Update()
@@ -62,12 +62,6 @@ public class ClickEvent : MonoBehaviour
         else lineRenderer.SetPosition(1, lineRenderer.transform.position + (transform.forward * 50));
     }
 
-
-    //public void TriggerUp(SteamVR_Action_Boolean fromAction, SteamVR_Input_Sources fromSource)
-    //{
-    //    Debug.Log("Trigger is up");
-    //}
-
     public void TriggerDown(SteamVR_Action_Boolean fromAction, SteamVR_Input_Sources fromSource)
     {
 
@@ -77,31 +71,29 @@ public class ClickEvent : MonoBehaviour
             (BackendServerManager.GetInstance().accountData.handType == HandType.right.ToString()
             && fromSource == SteamVR_Input_Sources.LeftHand)) return;
 
-            _gunShotSound.Play();
+        _gunShotSound.Play();
 
-        // GameManager.GetInstance()
-        // Player.instance
         _tempeffect = Player.instance.GetEffect();
-            _tempeffect.transform.position = effectPos.position;
-            _tempeffect.transform.rotation = transform.rotation;
-            _tempeffect.Play();
+        _tempeffect.transform.position = effectPos.position;
+        _tempeffect.transform.rotation = transform.rotation;
+        _tempeffect.Play();
 
         Player.instance.ReturnEffect(_tempeffect);
 
-            if (laserPointer.hitPoint != Vector3.zero)
-            {
-                _tempeffect = Player.instance.GetMark();
-                _tempeffect.transform.position = laserPointer.hitPoint;
-                _tempeffect.transform.rotation = transform.rotation;
-                _tempeffect.Play();
+        if (laserPointer.hitPoint != Vector3.zero)
+        {
+            _tempeffect = Player.instance.GetMark();
+            _tempeffect.transform.position = laserPointer.hitPoint;
+            _tempeffect.transform.rotation = transform.rotation;
+            _tempeffect.Play();
 
             Player.instance.ReturnMark(_tempeffect);
-            }
+        }
 
-            var currentMode = GameManager.GetInstance().modeData.currentPlayMode;
+        var currentMode = GameManager.GetInstance().modeData.currentPlayMode;
 
-            if (currentMode == GameMode.Bounty || currentMode == GameMode.Infinity)
-                GameManager.GetInstance().isShot = true;
+        if (currentMode == GameMode.Bounty || currentMode == GameMode.Infinity)
+            GameManager.GetInstance().isShot = true;
     }
 
     public void PointerClick(object sender, PointerEventArgs e)

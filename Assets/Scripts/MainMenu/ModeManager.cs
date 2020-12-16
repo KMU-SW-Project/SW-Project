@@ -196,6 +196,12 @@ public partial class ModeManager : MonoBehaviour
         guideText.text = "조준선 : 꺼짐";
     }
 
+    public void ExitGame()
+    {
+        Application.Quit();
+    }
+
+    #region 사운드
     public void SetGunGuide()
     {
         var guide = GameManager.GetInstance().gunGuide;
@@ -211,6 +217,12 @@ public partial class ModeManager : MonoBehaviour
         guideText.text = "조준선 : 꺼짐";
     }
 
+    public void SetSound(string typeValue)
+    {
+        GameManager.GetInstance().SetSoundValue(typeValue);
+    }
+
+    #endregion
 
     #region 무한 모드
 
@@ -297,8 +309,7 @@ public partial class ModeManager : MonoBehaviour
 
     // 현상금모드 시작
     public void StartAIMode()
-    {
-       
+    {       
         LoadScene(GameMode.Bounty);
     }
     #endregion
