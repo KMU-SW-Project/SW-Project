@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Audio;
+using UnityEngine.SceneManagement;
 
 public enum HandType
 {
@@ -47,6 +48,8 @@ public static class Sound
             if (value > 8 || value < 0) return;
 
             bGM = value;
+
+            if(SceneManager.GetActiveScene().name == "Title")
             TitleManager.instance.SetSoundValueText(BGM, SFX);
         }
     }
@@ -58,7 +61,9 @@ public static class Sound
             if (value > 8 || value < 0) return;
 
             sFX = value;
-            TitleManager.instance.SetSoundValueText(BGM, SFX);
+
+            if (SceneManager.GetActiveScene().name == "Title")
+                TitleManager.instance.SetSoundValueText(BGM, SFX);
         }
     }
 }
