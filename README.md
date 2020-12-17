@@ -12,4 +12,4 @@
   * 개발 완료후 일부 에셋 삭제 
 
 ## 플레이 영상
-<iframe width="1280" height="720" src="https://www.youtube.com/embed/rO9sTyEBgoY" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+[![플레이 영상](http://img.youtube.com/vi/rO9sTyEBgoY/0.jpg)](https://youtu.be/rO9sTyEBgoY?t=0s) 
