@@ -220,6 +220,8 @@ public partial class ModeManager : MonoBehaviour
     public void SetSound(string typeValue)
     {
         GameManager.GetInstance().SetSoundValue(typeValue);
+        bgmText.text = Sound.BGM.ToString();
+        sfxText.text = Sound.SFX.ToString();
     }
 
     #endregion
